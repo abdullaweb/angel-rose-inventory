@@ -48,7 +48,7 @@ class InvoiceController extends Controller
 
     public function InvoiceStore(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         // dd($request->discount_type, $request->discount_rate, $request->total_quantity, $discount_per_qty);
         $GLOBALS['invoiceStatus'] = '1';
         if ($request->paid_amount > $request->estimated_total) {
