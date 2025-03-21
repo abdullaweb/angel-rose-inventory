@@ -48,6 +48,8 @@ class InvoiceController extends Controller
 
     public function InvoiceStore(Request $request)
     {
+        dd($request->all());
+        // dd($request->discount_type, $request->discount_rate, $request->total_quantity, $discount_per_qty);
         $GLOBALS['invoiceStatus'] = '1';
         if ($request->paid_amount > $request->estimated_total) {
             $notification = array(
@@ -69,8 +71,6 @@ class InvoiceController extends Controller
             } else {
                 $customer_id = $request->customer_id;
             }
-
-
 
             $invoice = new Invoice();
             $invoice->invoice_no = $request->invoice_no;
@@ -99,8 +99,15 @@ class InvoiceController extends Controller
                         $invoice_details->save();
 
                         $discount_per_qty = 0;
+                        $discount_amount = 0; 
                         if ($request->discount_type != null) {
-                            $discount_per_qty = round($request->discount_amount / $request->total_quantity, 2);
+                            if ($request->discount_type == 'percentage') {
+                                $discount_per_qty = round(($request->discount_rate / 100) * $request->unit_price[$i], 2);
+                            } else {
+                                $discount_per_qty = round($request->discount_rate / $request->total_quantity, 2);
+                            }
+                            // $discount_per_qty = round($request->discount_rate / $request->total_quantity, 2);
+                            $discount_amount = $discount_per_qty * $request->selling_qty[$i];
                         }
 
                         // // product stock updated
@@ -130,13 +137,14 @@ class InvoiceController extends Controller
                                 $salesProfit->purchase_id = $purchaseInfo->id;
                                 $salesProfit->product_id = $request->product_id[$i];
                                 $salesProfit->unit_price_purchase = (float) $purchaseInfo->unit_price;
+                                $salesProfit->discount_per_unit = (float) $discount_per_qty;
                                 $salesProfit->unit_price_sales =  (float) $request->unit_price[$i];
                                 $salesProfit->date = $request->date;
 
 
                                 if ((float) $request->selling_qty[$i] > (float)$purchaseInfo->quantity) {  //sellinh => 150  =>purchase=> 100
                                     $fifoStock = abs($fifoStock - (float) $purchaseInfo->quantity); // 200-35 = 165
-                                    $salesProfit->profit_per_unit =  (float) $request->unit_price[$i] -  (float)$purchaseInfo->unit_price;
+                                    $salesProfit->profit_per_unit =  (float) $request->unit_price[$i] -  (float)$purchaseInfo->unit_price - (float) $discount_per_qty;
                                     $salesProfit->selling_qty =  (float) $purchaseInfo->quantity;  //35
                                     // $salesProfit->selling_qty =  (float) $request->selling_qty[$i];
                                     $salesProfit->profit = $salesProfit->profit_per_unit * $salesProfit->selling_qty;
@@ -151,7 +159,7 @@ class InvoiceController extends Controller
                                         'quantity' => (float) $purchaseInfo->quantity - $fifoStock,
                                     ]);
 
-                                    $salesProfit->profit_per_unit =  (float) $request->unit_price[$i] -  (float)$purchaseInfo->unit_price;
+                                    $salesProfit->profit_per_unit =  (float) $request->unit_price[$i] -  (float)$purchaseInfo->unit_price - (float) $discount_per_qty;
                                     $salesProfit->selling_qty =  $fifoStock;
                                     $salesProfit->profit = $salesProfit->profit_per_unit * $salesProfit->selling_qty;
                                     $salesProfit->created_at = Carbon::now();
@@ -241,7 +249,7 @@ class InvoiceController extends Controller
                     $payment->customer_id = $invoice->customer_id;
                     $payment->paid_status = $request->paid_status;
                     // $payment->due_amount = $request->due_amount;
-                    $payment->discount_amount = $request->discount_amount;
+                    $payment->discount_amount = $discount_amount;
                     $payment->total_amount = $request->estimated_total;
 
 

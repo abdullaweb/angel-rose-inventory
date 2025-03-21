@@ -12,24 +12,20 @@
                                 <div class="col-md-3">
                                     <div class="md-3">
                                         <label for="invoice_no" class="col-sm-12 col-form-label">Invoice No</label>
-                                        <input class="form-control" type="text" name="invoice_no"
-                                            value="{{ $invoice_no }}" id="invoice_no" readonly>
+                                        <input class="form-control" type="text" name="invoice_no" value="{{ $invoice_no }}" id="invoice_no" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="md-3">
                                         <label for="date" class="col-sm-12 col-form-label">Date</label>
-                                        <input type="date" class="form-control date_picker" name="date" id="date"
-                                            required="" data-parsley-required-message="Purchase Date is required">
+                                        <input type="date" class="form-control date_picker" name="date" id="date" required="" data-parsley-required-message="Purchase Date is required">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="md-3">
                                         <label for="customer_type" class="col-sm-12 col-form-label">Customer
                                             Type</label>
-                                        <select name="customer_type" id="customer_type"
-                                            class="form-control form-select" required=""
-                                            data-parsley-required-message="Customer Type is required">
+                                        <select name="customer_type" id="customer_type" class="form-control form-select" required="" data-parsley-required-message="Customer Type is required">
                                             <option selected value="">Select Customer Type</option>
                                             <option value="0">Retail</option>
                                             <option value="1">Wholesale</option>
@@ -40,8 +36,7 @@
                                     <div class="md-3">
                                         <label for="customer_id" class="col-sm-12 col-form-label">Customer
                                             Name</label>
-                                        <select name="customer_id" id="customer_id" class="form-control form-select select2"
-                                            required="" data-parsley-required-message="Customer Id is required">
+                                        <select name="customer_id" id="customer_id" class="form-control form-select select2" required="" data-parsley-required-message="Customer Id is required">
                                             <option selected value="">Select Customer Name</option>
                                             {{-- @foreach ($customers as $customer)
                                                 <option value="{{ $customer->id }}">
@@ -57,22 +52,19 @@
                                 <div class="col-md-4">
                                     <div class="md-3">
                                         <label for="customer_name" class="col-sm-12 col-form-label">Customer Name</label>
-                                        <input type="text" class="form-control" name="customer_name" id="customer_name"
-                                            placeholder="Customer Name">
+                                        <input type="text" class="form-control" name="customer_name" id="customer_name" placeholder="Customer Name">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="md-3">
                                         <label for="customer_email" class="col-sm-12 col-form-label">Customer Email</label>
-                                        <input type="email" class="form-control" name="customer_email" id="customer_email"
-                                            placeholder="Customer Email">
+                                        <input type="email" class="form-control" name="customer_email" id="customer_email" placeholder="Customer Email">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="md-3">
                                         <label for="customer_phone" class="col-sm-12 col-form-label">Customer Phone</label>
-                                        <input type="tel" class="form-control" name="customer_phone" id="customer_phone"
-                                            placeholder="Customer Phone">
+                                        <input type="tel" class="form-control" name="customer_phone" id="customer_phone" placeholder="Customer Phone">
                                     </div>
                                 </div>
                             </div>
@@ -97,9 +89,7 @@
                                         <tbody class="tbody">
                                             <tr class="tr">
                                                 <td class="text-center">
-                                                    <select name="category_id[]" id="category_1"
-                                                        class="form-control form-select category" required=""
-                                                        data-parsley-required-message="Category Id is required">
+                                                    <select name="category_id[]" id="category_1" class="form-control form-select category" required="" data-parsley-required-message="Category Id is required">
                                                         <option selected value="">Select Category</option>
                                                         @foreach ($categories as $category)
                                                             <option value="{{ $category->id }}">
@@ -109,36 +99,24 @@
                                                     </select>
                                                 </td>
                                                 <td class="text-center">
-                                                    <select name="product_id[]" id="product_1"
-                                                        class="form-control form-select product" required=""
-                                                        data-parsley-required-message="Product Id is required">
+                                                    <select name="product_id[]" id="product_1" class="form-control form-select product" required="" data-parsley-required-message="Product Id is required">
                                                         <option value="">Select Product</option>
                                                     </select>
                                                 </td>
                                                 <td class="text-center">
-                                                    <input type="text" class="form-control stock"
-                                                        placeholder="Stock Quantity" name="stock_qty[]" id="stock_qty_1"
-                                                        readonly>
+                                                    <input type="text" class="form-control stock" placeholder="Stock Quantity" name="stock_qty[]" id="stock_qty_1" readonly>
                                                 </td>
                                                 <td class="text-center">
-                                                    <input type="text" class="form-control quantity"
-                                                        placeholder="Quantity" name="selling_qty[]" id="selling_qty"
-                                                        required=""
-                                                        data-parsley-required-message="Quantity Id is required">
+                                                    <input type="text" class="form-control quantity" placeholder="Quantity" name="selling_qty[]" id="selling_qty" required="" data-parsley-required-message="Quantity Id is required">
                                                 </td>
                                                 <td class="text-center">
-                                                    <input type="text" class="form-control unit_price"
-                                                        placeholder="Unit Price" name="unit_price[]" id="unit_price"
-                                                        required=""
-                                                        data-parsley-required-message="Unit Price is required">
+                                                    <input type="text" class="form-control unit_price" placeholder="Unit Price" name="unit_price[]" id="unit_price" required="" data-parsley-required-message="Unit Price is required">
                                                 </td>
                                                 <td class="text-center">
-                                                    <input type="text" class="form-control selling_price"
-                                                        placeholder="Total" readonly name="selling_price[]">
+                                                    <input type="text" class="form-control selling_price" placeholder="Total" readonly name="selling_price[]">
                                                 </td>
                                                 <td class="text-center">
-                                                    <button type="button" onclick="removeRow(event)"
-                                                        class="btn btn-danger">
+                                                    <button type="button" onclick="removeRow(event)" class="btn btn-danger">
                                                         <i class="fa fa-times" aria-hidden="true"></i>
                                                     </button>
                                                 </td>
@@ -147,28 +125,27 @@
                                         <tfoot>
                                             <tr>
                                                 <th colspan="6"></th>
-                                                <tr>
-                                                    <th colspan="4"> </th>
-                                                    <th class="text-end" width="15%">
-                                                        <select name="discount_type" class="form-control discount_type" id="discount_type">
-                                                            <option value="" selected>Select Disocunt Type</option>
-                                                            <option value="flat">Flat</option>
-                                                            <option value="percentage">Percentage</option>
-                                                        </select>
-                                                    </th>
-                                                    <th>
-                                                        <input type="number" name="discount_rate" id="discount_rate"
-                                                            class="form-control discount_rate" placeholder="Discount Amount">
-                                                    </th>
-                                                </tr>
-                                                <tr>
-                                                    <th colspan="5"> </th>
-                                                    <th>
-                                                        <input type="text" readonly class="form-control"
-                                                            name="estimated_total" id="estimated_total"
-                                                            placeholder="Grand Total" value="0">
-                                                    </th>
-                                                </tr>
+                                            <tr>
+                                                <th colspan="4"> </th>
+                                                <th class="text-end" width="15%">
+                                                    <select name="discount_type" class="form-control discount_type" id="discount_type">
+                                                        <option value="" selected>Select Disocunt Type</option>
+                                                        <option value="flat">Flat</option>
+                                                        <option value="percentage">Percentage</option>
+                                                    </select>
+                                                </th>
+                                                <th>
+                                                    <input type="number" name="discount_rate" id="discount_rate" class="form-control discount_rate" placeholder="Discount Amount">
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="5"> </th>
+                                                <th>
+                                                    <input type="text" readonly class="form-control" name="estimated_total" id="estimated_total" placeholder="Grand Total" value="0">
+
+                                                    <input type="hidden" readonly class="form-control" name="total_quantity" id="total_quantity" placeholder="Total Quantity" value="0">
+                                                </th>
+                                            </tr>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -203,14 +180,12 @@
                                                 </select>
                                             </div>
                                             <div class="col-12">
-                                                <input type="text" placeholder="Note" class="form-control"
-                                                    name="check_number" id="check_number">
+                                                <input type="text" placeholder="Note" class="form-control" name="check_number" id="check_number">
                                             </div>
                                         </div>
                                         <div class="row" id="online-bank-row" style="display: none;">
                                             <div class="col-12">
-                                                <input type="text" placeholder="Note" class="form-control"
-                                                    name="note" id="note">
+                                                <input type="text" placeholder="Note" class="form-control" name="note" id="note">
                                             </div>
                                         </div>
 
@@ -225,8 +200,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-12">
-                                                <input type="text" placeholder="Transaction Number"
-                                                    class="form-control" name="transaction_nmber" id="transaction_nmber">
+                                                <input type="text" placeholder="Transaction Number" class="form-control" name="transaction_nmber" id="transaction_nmber">
                                             </div>
                                         </div>
                                     </div>
@@ -268,6 +242,7 @@
                 console.log(total);
                 $(this).closest('tr').find('input.selling_price').val(total);
                 totalAmountOfPrice();
+                totalQuantity();
             });
         });
     </script>
@@ -279,7 +254,7 @@
             <tr class="tr">
                 <td class="text-center">
                     <select name="category_id[]" id="category_${count}"
-                        class="form-control form-select select2 category" required=""
+                        class="form-control form-select category" required=""
                         data-parsley-required-message="Category Id is required">
                         <option selected value="">Select Category</option>
                         @foreach ($categories as $category)
@@ -291,7 +266,7 @@
                 </td>
                 <td class="text-center">
                     <select name="product_id[]" id="product_${count}"
-                        class="form-control form-select select2 product" required=""
+                        class="form-control form-select product" required=""
                         data-parsley-required-message="Product Id is required">
                         <option value="">Select Product</option>
                     </select>
@@ -326,7 +301,7 @@
 
             `;
             $('.tbody').append(tr);
-            $('.select2').select2(); 
+            $('.select2').select2();
             count++;
         }
 
@@ -408,7 +383,7 @@
                 success: function(data) {
                     console.log('date', data);
 
-                     $("#stock_qty_" + num[1]).val(data);
+                    $("#stock_qty_" + num[1]).val(data);
                 }
             });
         });
@@ -445,6 +420,17 @@
             $("#after_discount").val(sum);
             $("#estimated_total").val(sum);
             // $("#estimated_total").val(sum);
+        }
+
+        function totalQuantity() {
+            let totalQuantity = 0;
+            $('.quantity').each(function() {
+                let value = $(this).val();
+                if (!isNaN(value) && value.length != 0) {
+                    totalQuantity += parseFloat(value);
+                }
+            });
+            $("#total_quantity").val(totalQuantity);
         }
     </script>
 
