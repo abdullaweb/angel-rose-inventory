@@ -169,9 +169,19 @@
                                                     </td>
                                                     <td>Total</td>
                                                     <td class="text-center">
-                                                        <?php echo e(number_format($invoice->payment->total_amount)); ?>/-
+                                                        <?php echo e(number_format($invoice->payment->total_amount + $invoice->payment->discount_amount)); ?>/-
                                                     </td>
                                                 </tr>
+                                                <?php if($invoice->payment->discount_amount != NULL): ?>
+                                                <tr class="custom-border">
+                                                    <td></td>
+                                                    <td colspan="2"></td>
+                                                    <td>Discount Amount</td>
+                                                    <td class="text-center">
+                                                        <?php echo e(number_format($invoice->payment->discount_amount)); ?>/-
+                                                    </td>
+                                                </tr>
+                                               <?php endif; ?>
                                                 <tr class="custom-border">
                                                     <td></td>
                                                     <td colspan="2"></td>
@@ -189,6 +199,7 @@
                                                         </td>
                                                     </tr>
                                                 <?php endif; ?>
+                                               
                                             </tbody>
                                         </table>
                                     </div>

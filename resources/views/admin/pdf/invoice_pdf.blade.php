@@ -170,9 +170,19 @@
                                                     </td>
                                                     <td>Total</td>
                                                     <td class="text-center">
-                                                        {{ number_format($invoice->payment->total_amount) }}/-
+                                                        {{ number_format($invoice->payment->total_amount + $invoice->payment->discount_amount) }}/-
                                                     </td>
                                                 </tr>
+                                                @if ($invoice->payment->discount_amount != NULL)
+                                                <tr class="custom-border">
+                                                    <td></td>
+                                                    <td colspan="2"></td>
+                                                    <td>Discount Amount</td>
+                                                    <td class="text-center">
+                                                        {{ number_format($invoice->payment->discount_amount) }}/-
+                                                    </td>
+                                                </tr>
+                                               @endif
                                                 <tr class="custom-border">
                                                     <td></td>
                                                     <td colspan="2"></td>
@@ -190,6 +200,7 @@
                                                         </td>
                                                     </tr>
                                                 @endif
+                                               
                                             </tbody>
                                         </table>
                                     </div>

@@ -261,6 +261,8 @@ class InvoiceController extends Controller
 
 
 
+                    // $latestAccount = AccountDetail::where()->latest('id')->first();
+
                     // account details
                     $account_details->invoice_id = $invoice->id;
                     $account_details->customer_id = $invoice->customer_id;
@@ -281,6 +283,7 @@ class InvoiceController extends Controller
                         // account details
                         $account_details->paid_amount = $request->estimated_total;
                         $account_details->due_amount = '0';
+                        // $account_details->balance = '0';
                     } elseif ($request->paid_status == 'full_due') {
                         $payment->paid_amount = '0';
                         $payment->due_amount = $request->estimated_total;
