@@ -231,8 +231,10 @@ class DuePaymentController extends Controller
            
         // }
 
+        $payment_due_amount = Payment::where('customer_id', $request->company_id)->sum('due_amount');
+
         $accountBill = AccountDetail::where('customer_id', $customerInfo->id)->latest('id')->first();
-            $due_amount = $accountBill->balance ?? 0;
+            $due_amount = $accountBill->balance ?? $payment_due_amount;
 
         $invoiceAll = NULL;
 

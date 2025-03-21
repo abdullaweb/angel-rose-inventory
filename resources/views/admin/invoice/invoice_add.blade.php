@@ -146,8 +146,8 @@
                                                     <input type="hidden" readonly class="form-control" name="total_quantity" id="total_quantity" placeholder="Total Quantity" value="0">
                                                 </th>
                                             </tr>
-                                            </tr>
-                                        </tfoot>
+                                        </tr>
+                                    </tfoot>
                                     </table>
                                 </div>
                                 <div class="row mb-3">
