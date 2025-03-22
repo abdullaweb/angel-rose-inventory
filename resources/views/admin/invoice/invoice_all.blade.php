@@ -31,7 +31,6 @@
                                 </thead>
                                 <tfoot>
                                     <tr>
-                                    <tr>
                                         <th>Sl</th>
                                         <th>Company Name</th>
                                         <th>Invoice No</th>
@@ -39,14 +38,13 @@
                                         <th>Amount</th>
                                         <th>Action</th>
                                     </tr>
-                                    </tr>
                                 </tfoot>
                                 <tbody>
                                     @foreach ($allInvoice as $key => $item)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>
-                                                {{ $item['payment']['customer']['name'] }}
+                                                {{ $item['payment']['customer']['name'] ?? 'N/A' }}
                                                 @if ($item['payment']['customer']['status'] == '1')
                                                     <span class="badge bg-info">Wholesaler</span>
                                                 @elseif ($item['payment']['customer']['status'] == '0')

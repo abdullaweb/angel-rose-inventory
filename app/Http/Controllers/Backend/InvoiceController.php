@@ -250,6 +250,7 @@ class InvoiceController extends Controller
                     $payment->paid_status = $request->paid_status;
                     // $payment->due_amount = $request->due_amount;
                     $payment->discount_amount = $discount_amount;
+                    $payment->discount_type = $request->discount_type;
                     $payment->total_amount = $request->estimated_total;
 
 
@@ -359,6 +360,8 @@ class InvoiceController extends Controller
             return redirect()->back()->with($notification);
         } else {
 
+            $salesProducts = SalesProfit::where('invoice_id', $invoice_id)->get();
+
             Invoice::findOrFail($invoice_id)->update([
                 'invoice_no' => $request->invoice_no,
                 'date' => $request->date,
@@ -372,11 +375,15 @@ class InvoiceController extends Controller
 
             /** ============ Start update existing product sales information ===== */
 
-            $salesProducts = SalesProfit::where('invoice_id', $invoice_id)->get();
+           
             foreach ($salesProducts as $product) {
                 $purchaseStoreInfo = PurchaseStore::where('purchase_id', $product->purchase_id)->where('product_id', $product->product_id)->first();
-                $purchaseStoreInfo->quantity += $product->selling_qty;
-                $purchaseStoreInfo->update();
+
+                // dd($purchaseStoreInfo);
+                if($purchaseStoreInfo){
+                    $purchaseStoreInfo->quantity += $product->selling_qty;
+                    $purchaseStoreInfo->update();
+                }
                 $product->delete();
             }
 
@@ -416,6 +423,18 @@ class InvoiceController extends Controller
                 $invoice_details->selling_price = $request->selling_price[$i];
                 $invoice_details->save();
 
+
+                $discount_per_qty = 0;
+                $discount_amount = 0; 
+                if ($request->discount_type != null) {
+                    if ($request->discount_type == 'percentage') {
+                            $discount_per_qty = round(($request->discount_rate / 100) * $request->unit_price[$i], 2);
+                    } elseif ($request->discount_type == 'flat') {
+                            $discount_per_qty = round($request->discount_rate / $request->total_quantity);
+                    }
+                        $discount_amount = $discount_per_qty * $request->selling_qty[$i];
+                }
+
                  $productInfo = PurchaseStore::where('product_id', $invoice_details->product_id)->where('quantity', '!=', 0)->get();
 
 
@@ -428,12 +447,13 @@ class InvoiceController extends Controller
                         $salesProfit->product_id = $request->product_id[$i];
                         $salesProfit->unit_price_purchase = (float) $purchaseInfo->unit_price;
                         $salesProfit->unit_price_sales =  (float) $request->unit_price[$i];
+                        $salesProfit->discount_per_unit = (float) $discount_per_qty;
                         $salesProfit->date = $request->date;
 
 
                         if ((float) $request->selling_qty[$i] > (float)$purchaseInfo->quantity) {  
                             $fifoStock = abs($fifoStock - (float) $purchaseInfo->quantity); 
-                            $salesProfit->profit_per_unit =  (float) $request->unit_price[$i] -  (float)$purchaseInfo->unit_price;
+                            $salesProfit->profit_per_unit =  (float) $request->unit_price[$i] -  (float)$purchaseInfo->unit_price - (float) $discount_per_qty;
                             $salesProfit->selling_qty =  (float) $purchaseInfo->quantity;
                             $salesProfit->profit = $salesProfit->profit_per_unit * $salesProfit->selling_qty;
                             $salesProfit->created_at = Carbon::now();
@@ -500,7 +520,8 @@ class InvoiceController extends Controller
             $payment->customer_id = $invoice->customer_id;
             $payment->paid_status = $request->paid_status;
             // $payment->due_amount = $request->due_amount;
-            $payment->discount_amount = $request->discount_amount;
+            $payment->discount_amount = $discount_amount;
+            $payment->discount_type = $request->discount_type;
             $payment->total_amount = $request->estimated_total;
 
 

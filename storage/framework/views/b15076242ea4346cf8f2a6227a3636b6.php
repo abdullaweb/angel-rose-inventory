@@ -30,7 +30,6 @@
                                 </thead>
                                 <tfoot>
                                     <tr>
-                                    <tr>
                                         <th>Sl</th>
                                         <th>Company Name</th>
                                         <th>Invoice No</th>
@@ -38,14 +37,13 @@
                                         <th>Amount</th>
                                         <th>Action</th>
                                     </tr>
-                                    </tr>
                                 </tfoot>
                                 <tbody>
                                     <?php $__currentLoopData = $allInvoice; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
                                             <td><?php echo e($key + 1); ?></td>
                                             <td>
-                                                <?php echo e($item['payment']['customer']['name']); ?>
+                                                <?php echo e($item['payment']['customer']['name'] ?? 'N/A'); ?>
 
                                                 <?php if($item['payment']['customer']['status'] == '1'): ?>
                                                     <span class="badge bg-info">Wholesaler</span>

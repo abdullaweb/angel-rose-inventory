@@ -120,6 +120,25 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
+                                                    <th colspan="3"> </th>
+                                                    <th class="text-end" width="15%">
+                                                        <select name="discount_type" class="form-control discount_type" id="discount_type">
+                                                            <option value="" selected>Select Disocunt Type</option>
+                                                            <option value="flat" <?php echo e($invoice->payment->discount_type == 'flat' ? 'selected' : ''); ?>>Flat</option>
+                                                            <option value="percentage" <?php echo e($invoice->payment->discount_type == 'percentage' ? 'selected' : ''); ?>>Percentage</option>
+                                                        </select>
+                                                    </th>
+                                                    <?php if($invoice->payment->discount_type == 'flat'): ?>
+                                                    <th>
+                                                        <input type="number" name="discount_rate" id="discount_rate" class="form-control discount_rate" value="<?php echo e($invoice->payment->discount_amount); ?>" placeholder="Discount Amount">
+                                                    </th>
+                                                    <?php else: ?>
+                                                    <th>
+                                                        <input type="number" name="discount_rate" id="discount_rate" class="form-control discount_rate" value="<?php echo e(round($invoice->payment->discount_amount / $invoice->payment->total_amount * 100)); ?>" placeholder="Discount Rate">
+                                                    </th>
+                                                    <?php endif; ?>
+                                                </tr>
+                                                <tr>
                                                     <th colspan="4">
                                                         <label for="">Paid Amount</label>
                                                         <input type="text"
@@ -128,10 +147,12 @@
                                                     </th>
                                                     <th>
                                                         <label for="">Total Amount</label>
-                                                        <input type="text" readonly class="form-control"
+                                                        <input type="text" class="form-control"
                                                             name="estimated_total" id="estimated_total"
                                                             placeholder="Grand Total"
                                                             value="<?php echo e($invoice->payment->total_amount); ?>" readonly>
+
+                                                        <input type="hidden" readonly class="form-control" name="total_quantity" id="total_quantity" placeholder="Total Quantity" value="<?php echo e($invoice->invoice_details->sum('selling_qty')); ?>">
                                                     </th>
                                                 </tr>
                                             </tfoot>
@@ -230,13 +251,14 @@
     <script>
         $(document).ready(function() {
 
-            $(document).on("keyup click", ".unit_price,.quantity", function() {
+            $(document).on("keyup click", ".unit_price,.quantity, .discount_type, .discount_rate", function() {
                 let product_qty = $(this).closest('tr').find('input.quantity').val();
                 let unit_price = $(this).closest('tr').find('input.unit_price').val();
                 let total = unit_price * product_qty;
                 console.log(total);
                 $(this).closest('tr').find('input.total_amount').val(total);
                 totalAmountOfPrice();
+                totalQuantity();
             });
         });
     </script>
@@ -383,7 +405,38 @@
                     sum += parseFloat(value);
                 }
             });
+
+            let discount_type = $("#discount_type").val();
+            let discount_rate = parseFloat($('#discount_rate').val());
+            // alert(discount_type);
+            let discount_amount = 0;
+            if (!isNaN(discount_rate) && discount_rate.length != 0) {
+                if (discount_type == 'flat') {
+                    sum -= parseFloat(discount_rate);
+                    discount_amount = parseFloat(discount_rate);
+
+                } else if (discount_type == 'percentage') {
+                    let percentageAmount = Math.round((sum * discount_rate) / 100);
+                    discount_amount = percentageAmount;
+                    sum -= parseFloat(percentageAmount);
+                }
+            }
+
+            $("#discount_amount").val(discount_amount);
+            $("#after_discount").val(sum);
             $("#estimated_total").val(sum);
+        }
+
+
+        function totalQuantity() {
+            let totalQuantity = 0;
+            $('.quantity').each(function() {
+                let value = $(this).val();
+                if (!isNaN(value) && value.length != 0) {
+                    totalQuantity += parseFloat(value);
+                }
+            });
+            $("#total_quantity").val(totalQuantity);
         }
     </script>
 
