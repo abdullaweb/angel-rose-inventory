@@ -247,20 +247,6 @@ class ProductAdjustmentController extends Controller
     }
 
 
-    //Opening Packet Stock
-
-    public function UniqueNumberForPackage()
-    {
-        $package = Packaging::latest()->first();
-        if ($package) {
-            $name = $package->package_no;
-            $number = explode('_', $name);
-            $package_no = 'PK_' . str_pad((int)$number[1] + 1, 6, "0", STR_PAD_LEFT);
-        } else {
-            $package_no = 'PK_000001';
-        }
-        return $package_no;
-    }
 
     public function GetProduct($id)
     {

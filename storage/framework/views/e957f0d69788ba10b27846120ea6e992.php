@@ -54,7 +54,13 @@
     <!-- Handle bar-->
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
     <style>
-        span#select2-product_1-container {
+        /* span#select2-product_1-container {
+            text-align: left;
+        }
+        span#select2-product_2-container {
+            text-align: left;
+        } */
+        .select2-container .select2-selection--single .select2-selection__rendered {
             text-align: left;
         }
         select.product{
