@@ -178,7 +178,7 @@ class ProductController extends Controller
 
     public function ProductStockAll()
     {
-        $products = Product::OrderBy('name', 'asc')->take(10)->get();
+        $products = Product::OrderBy('name', 'asc')->get();
         return view('admin.stock.stock_all', compact('products'));
     }   
     
