@@ -19,6 +19,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PDF;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceController extends Controller
 {
@@ -48,6 +50,7 @@ class InvoiceController extends Controller
 
     public function InvoiceStore(Request $request)
     {
+        // dd($request->all());
         DB::beginTransaction();
         try {
             $GLOBALS['invoiceStatus'] = '1';
@@ -262,7 +265,8 @@ class InvoiceController extends Controller
     
     
     
-                        // $latestAccount = AccountDetail::where()->latest('id')->first();
+                        $latestAccount = AccountDetail::where('customer_id', $invoice->customer_id)->latest('id')->first();
+                       
     
                         // account details
                         $account_details->invoice_id = $invoice->id;
@@ -274,6 +278,12 @@ class InvoiceController extends Controller
                         $account_details->paid_source = $request->paid_source;
                         $account_details->bank_name = $bank_name;
                         $account_details->note = $note;
+
+                        if ($latestAccount) {
+                            $account_details->balance = $latestAccount->balance + $request->estimated_total;
+                        } else {
+                            $account_details->balance = $request->estimated_total;
+                        }
     
     
                         if ($request->paid_status == 'full_paid') {
@@ -356,12 +366,12 @@ class InvoiceController extends Controller
 
     public function InvoiceUpdate(Request $request)
     {
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             $GLOBALS['invoiceStatus'] = '1';
 
-        $invoice_id = $request->id;
-        $invoice = Invoice::findOrFail($invoice_id);
+            $invoice_id = $request->id;
+            $invoice = Invoice::findOrFail($invoice_id);
 
 
 
@@ -381,10 +391,6 @@ class InvoiceController extends Controller
                 'customer_id' => $request->customer_id,
                 'updated_by' => Auth::user()->id,
             ]);
-
-
-
-
 
             /** ============ Start update existing product sales information ===== */
 
@@ -412,10 +418,16 @@ class InvoiceController extends Controller
             Payment::where('invoice_id', $invoice_id)->delete();
             $paymentDetails = PaymentDetail::where('invoice_id', $invoice_id)->get();
             $accountDetails = AccountDetail::where('invoice_id', $invoice_id)->get();
+            // $lastAccount = AccountDetail::where('customer_id', $request->customer_id)->latest('id')->first();
             foreach ($paymentDetails as $item) {
                 $item->delete();
             }
             foreach ($accountDetails as $account) {
+                $nextAccount = AccountDetail::where('customer_id', $request->customer_id)->where('id', '>' , $account->id)->get();
+                foreach ($nextAccount as $next) {
+                    $next->balance = $next->balance - $account->balance;
+                    $next->update();
+                }
                 $account->delete();
             }
 
@@ -544,7 +556,7 @@ class InvoiceController extends Controller
             $payment_details->bank_name = $bank_name;
             $payment_details->note = $note;
 
-
+            $latestAccount = AccountDetail::where('customer_id', $request->customer_id)->latest('id')->first();
 
             // account details
             $account_details->invoice_id = $invoice->id;
@@ -555,6 +567,12 @@ class InvoiceController extends Controller
             $account_details->paid_source = $request->paid_source;
             $account_details->bank_name = $bank_name;
             $account_details->note = $note;
+
+            if ($latestAccount) {
+                $account_details->balance = $latestAccount->balance + $request->estimated_total;
+            } else {
+                $account_details->balance = $request->estimated_total;
+            }
 
 
             if ($request->paid_status == 'full_paid') {
@@ -592,7 +610,7 @@ class InvoiceController extends Controller
             $account_details->save();
         }
 
-        DB::commit();
+        // DB::commit();
 
         if ($GLOBALS['invoiceStatus'] == '0') {
             $notification = array(
@@ -607,19 +625,17 @@ class InvoiceController extends Controller
             );
             return redirect()->route('invoice.all')->with($notification);
         }
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            Log::error('Error Updating Invoice: ' . $th->getMessage());
-            $notification = array(
-                'message' => 'Sorry, Something went wrong',
-                'alert-type' => 'error',
-            );
-            return redirect()->back()->with($notification);
-        }
+        // } catch (\Throwable $th) {
+        //     DB::rollBack();
+        //     Log::error('Error Updating Invoice: ' . $th->getMessage() . ' Line: ' . $th->getLine());
+        //     $notification = array(
+        //         'message' => 'Sorry, Something went wrong',
+        //         'alert-type' => 'error',
+        //     );
+        //     return redirect()->back()->with($notification);
+        // }
         
     }
-
-
 
     public function InvoiceView($id)
     {
@@ -638,6 +654,8 @@ class InvoiceController extends Controller
 
     public function InvoiceDelete($id)
     {
+        DB::beginTransaction();
+        try {
         $invoice = Invoice::findOrFail($id);
 
         foreach ($invoice->invoice_details as $item) {
@@ -649,6 +667,15 @@ class InvoiceController extends Controller
 
         Payment::where('invoice_id', $invoice->id)->delete();
         PaymentDetail::where('invoice_id', $invoice->id)->delete();
+        $accountDetails = AccountDetail::where('invoice_id', $invoice->id)->get();
+        foreach ($accountDetails as $account) {
+            $nextAccount = AccountDetail::where('customer_id', $invoice->customer_id)->where('id', '>' , $account->id)->get();
+            foreach ($nextAccount as $next) {
+                $next->balance = $next->balance - $account->balance;
+                $next->update();
+            }
+            $account->delete();
+        }
         AccountDetail::where('invoice_id', $invoice->id)->delete();
 
         $salesProducts = SalesProfit::where('invoice_id',  $invoice->id)->get();
@@ -663,12 +690,23 @@ class InvoiceController extends Controller
 
         $invoice->delete();
 
+        DB::commit();
+
         $notification = array(
             'message' => 'Invoice Deleted Successfully',
             'alert-type' => 'success',
         );
 
         return redirect()->back()->with($notification);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error('Error Deleting Invoice: ' . $th->getMessage() . ' Line: ' . $th->getLine());
+            $notification = array(
+                'message' => 'Sorry, Something went wrong',
+                'alert-type' => 'error',
+            );
+            return redirect()->back()->with($notification);
+        }
     }
 
 

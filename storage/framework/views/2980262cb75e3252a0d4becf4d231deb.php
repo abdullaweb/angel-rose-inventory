@@ -1,5 +1,4 @@
-@extends('admin.admin_master')
-@section('admin')
+<?php $__env->startSection('admin'); ?>
     <style>
         .table>:not(caption)>*>* {
             padding: 0 !important;
@@ -15,7 +14,7 @@
 
                         <div class="d-print-none">
                             <div class="float-end">
-                                <a class="btn btn-info" href="{{ url()->previous() }}">Go Back</a>
+                                <a class="btn btn-info" href="<?php echo e(url()->previous()); ?>">Go Back</a>
                                 <a href="javascript:window.print()" class="btn btn-success waves-effect waves-light"><i
                                         class="fa fa-print"></i> Print</a>
                             </div>
@@ -27,23 +26,21 @@
                         <div class="card-body">
                             <div class="col-12">
                                 <div class="company-details mt-5">
-                                    @php
+                                    <?php
                                         $customerInfo = App\Models\Customer::where('id', $customer_id)->first();
                                         $due_amount = $billDetails->sum('total_amount') - $billDetails->sum('paid_amount');
-                                    @endphp
-                                    <h5><strong>Supplier Name : {{ $customerInfo->name }}</strong></h5>
-                                    <p class="mb-0">Address : {{ $customerInfo->address }}</p>
-                                    <p class="mb-0">Phone : {{ $customerInfo->mobile_no }}</p>
-                                    <p class="mb-0">E-mail : {{ $customerInfo->email }}</p>
+                                    ?>
+                                    <h5><strong>Supplier Name : <?php echo e($customerInfo->name); ?></strong></h5>
+                                    <p class="mb-0">Address : <?php echo e($customerInfo->address); ?></p>
+                                    <p class="mb-0">Phone : <?php echo e($customerInfo->mobile_no); ?></p>
+                                    <p class="mb-0">E-mail : <?php echo e($customerInfo->email); ?></p>
                                 </div>
                             </div>
-                            {{-- <div class="col-md-12 py-5">
-                                <h3> Account details from {{ $start_date }} to {{ $end_date }}</h3>
-                            </div> --}}
+                            
                             <div class="col-12 py-3">
-                                <h4 class="text-center">Account details from {{ $start_date }} to {{ $end_date }}</h4>
+                                <h4 class="text-center">Account details from <?php echo e($start_date); ?> to <?php echo e($end_date); ?></h4>
 
-                                <h5 class="text-center">Total Due: {{ $due_amount }}</h5>
+                                <h5 class="text-center">Total Due: <?php echo e($due_amount); ?></h5>
                                 <div class="payment-details">
                                     <table class="table table-bordered border-dark text-center text-dark" width="100%">
                                         <thead>
@@ -71,30 +68,31 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if (count($billDetails) > 0)
-                                                @php
+                                            <?php if(count($billDetails) > 0): ?>
+                                                <?php
                                                     $total_sum = '0';
-                                                @endphp
-                                                @foreach ($billDetails as $key => $details)
+                                                ?>
+                                                <?php $__currentLoopData = $billDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $details): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <tr>
-                                                        <td>{{ $key + 1 }}</td>
-                                                        <td>{{ date('d-m-Y', strtotime($details->created_at)) }}</td>
+                                                        <td><?php echo e($key + 1); ?></td>
+                                                        <td><?php echo e(date('d-m-Y', strtotime($details->created_at))); ?></td>
                                                         <td>
-                                                            @if ($details->total_amount != null)
-                                                                {{ $details->total_amount }}
-                                                            @else
+                                                            <?php if($details->total_amount != null): ?>
+                                                                <?php echo e($details->total_amount); ?>
+
+                                                            <?php else: ?>
                                                                 -
-                                                            @endif
+                                                            <?php endif; ?>
                                                         </td>
-                                                        <td>{{ $details->paid_amount }}</td>
-                                                        <td>{{ $details->balance }}</td>
+                                                        <td><?php echo e($details->paid_amount); ?></td>
+                                                        <td><?php echo e($details->balance); ?></td>
                                                     </tr>
-                                                @endforeach
-                                            @else
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <?php else: ?>
                                                 <tr>
                                                     <td colspan="7"> No data found</td>
                                                 </tr>
-                                            @endif
+                                            <?php endif; ?>
 
                                         </tbody>
                                     </table>
@@ -106,4 +104,6 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/report/customer_account_detials_report.blade.php ENDPATH**/ ?>

@@ -41,7 +41,6 @@
                             <div class="col-12">
                                 <h4 class="text-center">Account Details</h4>
                                 <div class="payment-details">
-                                    {{-- <table class="table table-bordered border-dark text-center text-dark" width="100%"> --}}
                                     <table id="datatable" class="table table-bordered dt-responsive nowrap"
                                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                         <thead>
@@ -55,29 +54,17 @@
                                                     <h6 class="fw-bold">Date</h6>
                                                 </th>
                                                 <th>
-                                                    <h6 class="fw-bold">Invoice</h6>
-                                                </th>
-                                                <th>
-                                                    <h6 class="fw-bold">Status</h6>
+                                                    <h6 class="fw-bold">Particular</h6>
                                                 </th>
                                                 <th>
                                                     <h6 class="fw-bold">Total Amount</h6>
                                                 </th>
                                                 <th>
-                                                    <h6 class="fw-bold">Payment Amount</h6>
-                                                </th>
-                                                <th>
-                                                    <h6 class="fw-bold">Due Amount</h6>
+                                                    <h6 class="fw-bold">Paid Amount</h6>
                                                 </th>
                                                 <th>
                                                     <h6 class="fw-bold">Balance</h6>
                                                 </th>
-                                                <th>
-                                                    <h6 class="fw-bold">Paid By</h6>
-                                                </th>
-                                                {{-- <th>
-                                                    <h6 class="fw-bold">Balance</h6>
-                                                </th> --}}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -90,17 +77,12 @@
                                                     <td>{{ date('d-m-Y', strtotime($details->date)) }}</td>
 
                                                     <td>
-                                                        @if ($details->invoice_id != null)
-                                                            <a target="_blank"
-                                                                href="{{ route('invoice.view', $details->invoice_id) }}">
-                                                                {{ $details->account_details->invoice_no }}</a>
-                                                        @else
-                                                        @endif
-                                                    </td>
-
-                                                    <td>
                                                         @if ($details->status == '1')
-                                                            Invoice
+                                                           @if($details->paid_source == NULL)
+                                                            Sales
+                                                           @else
+                                                            Sales {{ ' - (' . $details->paid_source . ')' }}
+                                                            @endif
                                                         @elseif($details->status == '0')
                                                             Due Payment
                                                         @elseif($details->status == '2')
@@ -115,13 +97,7 @@
                                                         @endif
                                                     </td>
                                                     <td>{{ $details->paid_amount }}</td>
-                                                    <td>{{ $details->due_amount }}</td>
                                                     <td>{{ $details->balance }}</td>
-                                                    <td>
-                                                        <span class="badge bg-info">{{ $details->paid_source }}</span>
-                                                    </td>
-                                                    {{-- <td>{{ $total_sum += $details->total_amount - $details->paid_amount }}
-                                                    </td> --}}
                                                 </tr>
                                             @endforeach
                                         </tbody>

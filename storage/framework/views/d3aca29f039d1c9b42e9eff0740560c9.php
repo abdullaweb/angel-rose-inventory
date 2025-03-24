@@ -38,7 +38,6 @@
                             <div class="col-12">
                                 <h4 class="text-center">Account Details</h4>
                                 <div class="payment-details">
-                                    
                                     <table id="datatable" class="table table-bordered dt-responsive nowrap"
                                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                         <thead>
@@ -52,27 +51,17 @@
                                                     <h6 class="fw-bold">Date</h6>
                                                 </th>
                                                 <th>
-                                                    <h6 class="fw-bold">Invoice</h6>
-                                                </th>
-                                                <th>
-                                                    <h6 class="fw-bold">Status</h6>
+                                                    <h6 class="fw-bold">Particular</h6>
                                                 </th>
                                                 <th>
                                                     <h6 class="fw-bold">Total Amount</h6>
                                                 </th>
                                                 <th>
-                                                    <h6 class="fw-bold">Payment Amount</h6>
-                                                </th>
-                                                <th>
-                                                    <h6 class="fw-bold">Due Amount</h6>
+                                                    <h6 class="fw-bold">Paid Amount</h6>
                                                 </th>
                                                 <th>
                                                     <h6 class="fw-bold">Balance</h6>
                                                 </th>
-                                                <th>
-                                                    <h6 class="fw-bold">Paid By</h6>
-                                                </th>
-                                                
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -85,17 +74,13 @@
                                                     <td><?php echo e(date('d-m-Y', strtotime($details->date))); ?></td>
 
                                                     <td>
-                                                        <?php if($details->invoice_id != null): ?>
-                                                            <a target="_blank"
-                                                                href="<?php echo e(route('invoice.view', $details->invoice_id)); ?>">
-                                                                <?php echo e($details->account_details->invoice_no); ?></a>
-                                                        <?php else: ?>
-                                                        <?php endif; ?>
-                                                    </td>
-
-                                                    <td>
                                                         <?php if($details->status == '1'): ?>
-                                                            Invoice
+                                                           <?php if($details->paid_source == NULL): ?>
+                                                            Sales
+                                                           <?php else: ?>
+                                                            Sales <?php echo e(' - (' . $details->paid_source . ')'); ?>
+
+                                                            <?php endif; ?>
                                                         <?php elseif($details->status == '0'): ?>
                                                             Due Payment
                                                         <?php elseif($details->status == '2'): ?>
@@ -111,12 +96,7 @@
                                                         <?php endif; ?>
                                                     </td>
                                                     <td><?php echo e($details->paid_amount); ?></td>
-                                                    <td><?php echo e($details->due_amount); ?></td>
                                                     <td><?php echo e($details->balance); ?></td>
-                                                    <td>
-                                                        <span class="badge bg-info"><?php echo e($details->paid_source); ?></span>
-                                                    </td>
-                                                    
                                                 </tr>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
