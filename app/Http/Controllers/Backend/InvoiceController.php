@@ -366,8 +366,8 @@ class InvoiceController extends Controller
 
     public function InvoiceUpdate(Request $request)
     {
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
             $GLOBALS['invoiceStatus'] = '1';
 
             $invoice_id = $request->id;
@@ -610,7 +610,7 @@ class InvoiceController extends Controller
             $account_details->save();
         }
 
-        // DB::commit();
+        DB::commit();
 
         if ($GLOBALS['invoiceStatus'] == '0') {
             $notification = array(
@@ -625,15 +625,15 @@ class InvoiceController extends Controller
             );
             return redirect()->route('invoice.all')->with($notification);
         }
-        // } catch (\Throwable $th) {
-        //     DB::rollBack();
-        //     Log::error('Error Updating Invoice: ' . $th->getMessage() . ' Line: ' . $th->getLine());
-        //     $notification = array(
-        //         'message' => 'Sorry, Something went wrong',
-        //         'alert-type' => 'error',
-        //     );
-        //     return redirect()->back()->with($notification);
-        // }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error('Error Updating Invoice: ' . $th->getMessage() . ' Line: ' . $th->getLine());
+            $notification = array(
+                'message' => 'Sorry, Something went wrong',
+                'alert-type' => 'error',
+            );
+            return redirect()->back()->with($notification);
+        }
         
     }
 
