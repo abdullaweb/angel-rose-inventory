@@ -18,7 +18,7 @@ return new class extends Migration
             $table->bigInteger('purchase_id');
             $table->double('unit_price_purchase');
             $table->double('unit_price_sales');
-            $table->decimal('unit_price_profit', 10, 2);    
+            $table->decimal('discount_per_unit', 10, 2);    
             $table->double('selling_qty');
             $table->double('profit_per_unit');
             $table->double('profit');
