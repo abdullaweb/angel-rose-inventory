@@ -76,10 +76,14 @@
                                                     <td>
                                                         <?php if($details->status == '1'): ?>
                                                            <?php if($details->paid_source == NULL): ?>
-                                                            Sales
+                                                            <a href="<?php echo e(route('invoice.print', $details->invoice_id)); ?>">
+                                                                Sales
+                                                            </a>
                                                            <?php else: ?>
-                                                            Sales <?php echo e(' - (' . $details->paid_source . ')'); ?>
+                                                            <a href="<?php echo e(route('invoice.print', $details->invoice_id)); ?>">
+                                                                Sales <?php echo e(' - (' . $details->paid_source . ')'); ?>
 
+                                                            </a>
                                                             <?php endif; ?>
                                                         <?php elseif($details->status == '0'): ?>
                                                             Due Payment

@@ -79,9 +79,13 @@
                                                     <td>
                                                         @if ($details->status == '1')
                                                            @if($details->paid_source == NULL)
-                                                            Sales
+                                                            <a href="{{ route('invoice.print', $details->invoice_id) }}">
+                                                                Sales
+                                                            </a>
                                                            @else
-                                                            Sales {{ ' - (' . $details->paid_source . ')' }}
+                                                            <a href="{{ route('invoice.print', $details->invoice_id) }}">
+                                                                Sales {{ ' - (' . $details->paid_source . ')' }}
+                                                            </a>
                                                             @endif
                                                         @elseif($details->status == '0')
                                                             Due Payment
