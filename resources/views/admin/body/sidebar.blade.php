@@ -105,6 +105,12 @@
                                  <span>All Product</span>
                              </a>
                          </li>
+                         <li>
+                             <a href="{{ route('product.adjustment.all') }}" class="waves-effect">
+                                 <i class="ri-mail-send-line"></i>
+                                 <span>Product Adjustment</span>
+                             </a>
+                         </li>
                      </ul>
                  </li>
                  <hr>

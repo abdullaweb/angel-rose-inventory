@@ -12,6 +12,7 @@ use App\Http\Controllers\Backend\InvoiceController;
 use App\Http\Controllers\Backend\PurchaseController;
 use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\DuePaymentController;
+use App\Http\Controllers\Backend\ProductAdjustmentController;
 use App\Http\Controllers\Backend\UnitController;
 use App\Http\Controllers\Backend\AdvancedController;
 use App\Http\Controllers\Backend\DefaultController;
@@ -86,6 +87,20 @@ Route::middleware('auth', 'role:admin')->group(function () {
 
         //dynamic query
         Route::get('/dynamic/query/customer', 'DynamicQueryCustomer')->name('dynamic.query.customer');
+    });
+
+    // Product Adjustment All Route
+    Route::controller(ProductAdjustmentController::class)->group(function () {
+        Route::get('/product/adjustment/all', 'ProductAdjustmentAll')->name('product.adjustment.all');
+        Route::get('/product/adjustment/add', 'ProductAdjustmentAdd')->name('product.adjustment.add');
+        Route::post('/product/adjustment/store', 'ProductAdjustmentStore')->name('product.adjustment.store');
+        Route::get('/product/adjustment/edit/{id}', 'ProductAdjustmentEdit')->name('product.adjustment.edit');
+        Route::post('/product/adjustment/update', 'ProductAdjustmentUpdate')->name('product.adjustment.update');
+        Route::get('/product/adjustment/delete/{id}', 'ProductAdjustmentDelete')->name('product.adjustment.delete');
+        // view adjustment
+        Route::get('/product/adjustment/view/{id}', 'ProductAdjustmentView')->name('product.adjustment.view');
+
+        Route::get('/get/products/{id}', 'GetProduct')->name('get.products');
     });
 
 
