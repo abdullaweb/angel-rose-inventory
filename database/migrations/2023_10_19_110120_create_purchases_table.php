@@ -19,6 +19,7 @@ return new class extends Migration
             $table->double('total_amount')->nullable();
             $table->double('paid_amount')->nullable();
             $table->double('due_amount')->nullable();
+            $table->string('type')->default('main')->nullable();
             $table->tinyInteger('created_by')->nullable();
             $table->timestamps();
         });
