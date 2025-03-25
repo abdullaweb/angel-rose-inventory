@@ -284,7 +284,7 @@
                      <ul class="sub-menu" aria-expanded="true">
                          <li>
                              <a href="<?php echo e(route('category.report')); ?>" class="waves-effect">
-                                 <i class="ri-layout-3-line"></i>
+                                 <i class="ri-arrow-right-line"></i>
                                  <span>Category Report</span>
                              </a>
                          </li>
@@ -292,6 +292,10 @@
                          <li>
                              <a href="<?php echo e(route('get.cat.report.summary')); ?>">
                                  <i class="ri-arrow-right-line"></i>Category Summery</a>
+                         </li>
+                         <li>
+                             <a href="<?php echo e(route('customer.ledger.index')); ?>">
+                                 <i class="ri-arrow-right-line"></i>Customer Ledger</a>
                          </li>
                          <li>
                              <a href="<?php echo e(route('daily.invoice.report')); ?>">
@@ -358,4 +362,4 @@
          <!-- Sidebar -->
      </div>
  </div>
-<?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/body/sidebar.blade.php ENDPATH**/ ?>
+<?php /**PATH E:\laragon\www\angel-rose-inventory\resources\views/admin/body/sidebar.blade.php ENDPATH**/ ?>

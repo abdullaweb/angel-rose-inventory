@@ -24,8 +24,8 @@ class InvoiceController extends Controller
 {
     public function InvoiceAll()
     {
+        $allInvoice = Invoice::where('status', 1)->where('return_status', 0)->latest()->get();
         // $allInvoice = Invoice::where('status', '1')->where('return_status', '0')->latest()->get();
-        $allInvoice = Invoice::where('status', '1')->where('return_status', '0')->latest()->take(10)->get();
 
         $duplicates = Invoice::select('invoice_no', DB::raw('COUNT(*) as count'))
             ->groupBy('invoice_no')
@@ -1040,7 +1040,7 @@ class InvoiceController extends Controller
 
     public function UniqueNumber()
     {
-        $invoice = Invoice::latest()->first();
+        $invoice = Invoice::orderByDesc('id')->first();
         if ($invoice) {
             $name = $invoice->invoice_no;
             $number = explode('_', $name);

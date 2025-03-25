@@ -284,7 +284,7 @@
                      <ul class="sub-menu" aria-expanded="true">
                          <li>
                              <a href="{{ route('category.report') }}" class="waves-effect">
-                                 <i class="ri-layout-3-line"></i>
+                                 <i class="ri-arrow-right-line"></i>
                                  <span>Category Report</span>
                              </a>
                          </li>
@@ -292,6 +292,10 @@
                          <li>
                              <a href="{{ route('get.cat.report.summary') }}">
                                  <i class="ri-arrow-right-line"></i>Category Summery</a>
+                         </li>
+                         <li>
+                             <a href="{{ route('customer.ledger.index') }}">
+                                 <i class="ri-arrow-right-line"></i>Customer Ledger</a>
                          </li>
                          <li>
                              <a href="{{ route('daily.invoice.report') }}">

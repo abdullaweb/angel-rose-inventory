@@ -68,4 +68,4 @@
         }
     </style>
 </head>
-<?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/body/head.blade.php ENDPATH**/ ?>
+<?php /**PATH E:\laragon\www\angel-rose-inventory\resources\views/admin/body/head.blade.php ENDPATH**/ ?>
