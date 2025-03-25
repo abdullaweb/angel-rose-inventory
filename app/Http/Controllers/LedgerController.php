@@ -10,8 +10,6 @@ use App\Exports\CustomerLedgerExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 
-
-
 class LedgerController extends Controller
 {
      // Show supplier ledger view
