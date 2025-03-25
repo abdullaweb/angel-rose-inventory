@@ -24,9 +24,8 @@ class InvoiceController extends Controller
 {
     public function InvoiceAll()
     {
-        $allInvoice = Invoice::where('status', 1)->where('return_status', 0)->latest()->get();
-        // $allInvoice = Invoice::where('status', '1')->where('return_status', '0')->latest()->get();
-
+        $allInvoice = Invoice::where('status', 1)->where('return_status', 0)->orderBy('id', 'desc')->latest()->get();
+      
         $duplicates = Invoice::select('invoice_no', DB::raw('COUNT(*) as count'))
             ->groupBy('invoice_no')
             ->whereYear('date', '2025')
