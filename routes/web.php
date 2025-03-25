@@ -20,6 +20,7 @@ use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\ReturnProductController;
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WastesSaleController;
 use Illuminate\Support\Facades\Route;
@@ -142,6 +143,16 @@ Route::middleware('auth', 'role:admin')->group(function () {
         Route::get('/category/edit/{id}', 'categoryEdit')->name('category.edit');
         Route::post('/category/update', 'categoryUpdate')->name('category.update');
         Route::get('/category/delete/{id}', 'categoryDelete')->name('category.delete');
+    });
+
+    // Ledger Controller All Route
+
+    Route::controller(LedgerController::class)->group(function () {
+        Route::get('/customer-ledger', 'CustomerLedger')->name('customer.ledger.index');
+        Route::post('/customer-ledger/fetch',  'CustomerfetchLedger')->name('customer.ledger.fetch');
+        Route::post('/customer-ledger/download',  'CustomerdownloadLedger')->name('customer.ledger.download');
+        Route::post('/customer-ledger/download-excel', 'CustomerdownloadLedgerExcel')->name('customer.ledger.download.excel');
+        Route::get('/pdf/view', 'PdfView');
     });
 
     // Supplier All Route
