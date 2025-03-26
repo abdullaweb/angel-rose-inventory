@@ -329,6 +329,8 @@ class AccountController extends Controller
      public function DeleteOpeningBalance($id)
      {
          AccountDetail::findOrFail($id)->delete();
+
+         $this->resetAccountBalance(AccountDetail::findOrFail($id));
  
          $notification = array(
              'message' => 'Balance Deleted Successfully',
