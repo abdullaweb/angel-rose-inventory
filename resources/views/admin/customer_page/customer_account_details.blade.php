@@ -88,7 +88,8 @@
                                                             </a>
                                                             @endif
                                                         @elseif($details->status == '0')
-                                                            <a href="{{ route('edit.due.payment', $details->due_payment_id) }}">
+                                                        
+                                                            <a href="{{ $details->due_payment_id != null ? route('edit.due.payment', $details->due_payment_id) : '#' }}">
                                                                 Due Payment
                                                             </a>
                                                         @elseif($details->status == '2')

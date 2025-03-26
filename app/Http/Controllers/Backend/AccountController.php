@@ -289,6 +289,7 @@ class AccountController extends Controller
 
             $this->resetAccountBalance(AccountDetail::findOrFail($accountId));
 
+
             DB::commit();
 
             $notification = array(
