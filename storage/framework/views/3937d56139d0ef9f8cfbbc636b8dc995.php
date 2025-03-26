@@ -1,5 +1,4 @@
-@extends('admin.admin_master')
-@section('admin')
+<?php $__env->startSection('admin'); ?>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <!-- Begin Page Content -->
     <div class="page-content">
@@ -10,7 +9,7 @@
                     <div class="col-12 py-3 d-flex justify-content-between align-items-center">
                         <h6 class="m-0 font-weight-bold text-primary">All Opening</h6>
                         <h6 class="m-0 font-weight-bold text-primary">
-                            <a href="{{ route('add.opening.balance') }}">
+                            <a href="<?php echo e(route('add.opening.balance')); ?>">
                                 <button class="btn btn-info">Add Balance</button>
                             </a>
                         </h6>
@@ -41,32 +40,35 @@
                         </tfoot>
                         <tbody>
 
-                            @foreach ($allOpening as $key => $item)
+                            <?php $__currentLoopData = $allOpening; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
-                                    <td>{{ $key + 1 }}</td>
+                                    <td><?php echo e($key + 1); ?></td>
                                     <td class="text-capitalize">
-                                        {{ $item['customer']['name'] }}
+                                        <?php echo e($item['customer']['name']); ?>
+
                                     </td>
                                     <td class="text-capitalize">
-                                        {{ $item['customer']['phone'] }}
+                                        <?php echo e($item['customer']['phone']); ?>
+
                                     </td>
                                     <td class="text-capitalize">
-                                        {{ $item->total_amount }}
+                                        <?php echo e($item->total_amount); ?>
+
                                     </td>
                                     <td style="display:flex;">
-                                        <a title="Edit Balance" href="{{ route('edit.opening.balance', $item->id) }}"
+                                        <a title="Edit Balance" href="<?php echo e(route('edit.opening.balance', $item->id)); ?>"
                                             class="btn btn-info text-light">
                                             <i class="fas fa-edit"></i>
                                             Edit
                                         </a>
                                         <a title="Delete Balance" style="margin-left: 5px;"
-                                            href="{{ route('delete.opening.balance', $item->id) }}" class="btn btn-danger"
+                                            href="<?php echo e(route('delete.opening.balance', $item->id)); ?>" class="btn btn-danger"
                                             id="delete">
                                             <i class="fas fa-trash-alt"></i>
                                         </a>
                                     </td>
                                 </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -77,4 +79,6 @@
     </div>
 
     <!-- End Page Content -->
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/wholesaler/opening_balance/all_opening.blade.php ENDPATH**/ ?>

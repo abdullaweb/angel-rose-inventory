@@ -14,6 +14,8 @@ use App\Models\Purchase;
 use App\Models\WastesSale;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\AcceptHeader;
 
 class AccountController extends Controller
@@ -201,87 +203,139 @@ class AccountController extends Controller
     }
 
 
-    // opening balance method
-    public function AllOpeningBalance()
-    {
-        $allOpening = AccountDetail::where('status', '2')->get();
-        return view('admin.wholesaler.opening_balance.all_opening', compact('allOpening'));
-    }
-    public function AddOpeningBalance()
-    {
-        $customers = Customer::OrderBy('name', 'asc')->where('status', '1')->get();
-        return view('admin.wholesaler.opening_balance.add_opening', compact('customers'));
-    }
+     // opening balance method
+     public function AllOpeningBalance()
+     {
+         $allOpening = AccountDetail::where('status', '2')->get();
+         return view('admin.wholesaler.opening_balance.all_opening', compact('allOpening'));
+     }
+     public function AddOpeningBalance()
+     {
+         $customers = Customer::OrderBy('name', 'asc')->where('status', '1')->get();
+         return view('admin.wholesaler.opening_balance.add_opening', compact('customers'));
+     }
+ 
+     public function StoreOpeningBalance(Request $request)
+     {
+         DB::beginTransaction();
+         try{
+ 
+             $exitingWholesaler = AccountDetail::where('customer_id', $request->customer_id)->where('status', '2')->first();
+         if ($exitingWholesaler) {
+             $notification = array(
+                 'message' => 'Opening Balance Already Added!',
+                 'alert-type' => 'error',
+             );
+             return redirect()->back()->with($notification);
+         } else {
+             $latestAccount = AccountDetail::where('customer_id', $request->customer_id)->latest('id')->first();
+             $account_details = new AccountDetail();
+             $account_details->total_amount = $request->total_amount;
+             $account_details->paid_amount = 0;
+             $account_details->due_amount = $request->total_amount;
+             $account_details->balance = $latestAccount->balance + $request->total_amount;
+             $account_details->customer_id = $request->customer_id;
+             $account_details->date = date('Y-m-d', strtotime($request->date));
+             $account_details->status = '2';
+             $account_details->save();
+ 
+             DB::commit();
+ 
+             $notification = array(
+                 'message' => 'Opening Balance Added Successfully!',
+                 'alert_type' => 'success',
+             );
+             return redirect()->route('all.opening.balance')->with($notification);
+         }
+         } catch (\Exception $e) {
+             DB::rollBack();
+             Log::error('Storing Opening Balance Error' . $e->getMessage() . 'Line: ' . $e->getLine());
+ 
+             $notification = array(
+                 'message' => 'Opening Balance Not Added!',
+                 'alert-type' => 'error',
+             );
+             return redirect()->back()->with($notification);
+         }
+     }
+ 
+ 
+     public function EditOpeningBalance($id)
+     {
+         $accountInfo = AccountDetail::findOrFail($id);
+         $customers = Customer::where('status', '1')->OrderBy('name', 'asc')->get();
+         return view('admin.wholesaler.opening_balance.edit_opening', compact('accountInfo', 'customers'));
+     }
+ 
+     public function UpdateOpeningBalance(Request $request)
+     {
+ 
+        //  dd($request->all());
+ 
+         $accountId = $request->id;
 
-    public function StoreOpeningBalance(Request $request)
-    {
+         $previousAccount = AccountDetail::where('id', '<' , $accountId)->where('customer_id', $request->customer_id)->latest('id')->first();
 
-        $exitingWholesaler = AccountDetail::where('customer_id', $request->customer_id)->where('status', '2')->first();
-        if ($exitingWholesaler) {
-            $notification = array(
-                'message' => 'Opening Balance Already Added!',
-                'alert-type' => 'error',
-            );
-            return redirect()->back()->with($notification);
-        } else {
-            $account_details = new AccountDetail();
-            $account_details->total_amount = $request->total_amount;
-            $account_details->paid_amount = $request->paid_amount;
-            $account_details->due_amount = $request->total_amount - $request->paid_amount;
-            $account_details->customer_id = $request->customer_id;
-            $account_details->date = date('Y-m-d', strtotime($request->date));
-            $account_details->status = '2';
-            $account_details->save();
+         $previousBalance = $previousAccount->balance;
+ 
+         AccountDetail::findOrFail($accountId)->update([
+             'total_amount' => $request->total_amount,
+             'paid_amount' => $request->paid_amount,
+             'customer_id' => $request->customer_id,
+             'due_amount' => $request->total_amount - $request->paid_amount,
+             'balance' => $previousBalance + ($request->total_amount - $request->paid_amount),
+             'date' => date('Y-m-d', strtotime($request->date)),
+         ]);
 
-            $notification = array(
-                'message' => 'Opening Balance Added Successfully!',
-                'alert_type' => 'success',
-            );
-            return redirect()->route('all.opening.balance')->with($notification);
+         $this->resetAccountBalance(AccountDetail::findOrFail($accountId));
+
+         $notification = array(
+             'message' => 'Opening Balance Updated Successfully',
+             'alert_type' => 'success'
+         );
+ 
+         return redirect()->route('all.opening.balance')->with($notification);
+     }
+
+     private function resetAccountBalance($accountID)
+    {        
+        $accountDetail = AccountDetail::where('id', $accountID->id)
+            ->first();
+        
+        if ($accountDetail) {
+            $nextAccountDetails = AccountDetail::where('id', '>', $accountDetail->id)
+                ->orderBy('id')
+                ->get();
+
+            $previous_balance = $accountDetail->balance;
+        
+            foreach ($nextAccountDetails as $next) {
+                if($next->total_amount > 0){
+                    $next->balance = $next->total_amount - $next->paid_amount + $previous_balance;
+                    $next->due_amount = $next->balance;
+                }elseif($next->total_amount == 0){
+                    $next->balance = $previous_balance - $next->paid_amount;
+                    $next->due_amount = $next->balance;
+                }
+                $next->save();
+                $previous_balance = $next->balance;
+            }
+
         }
+        
     }
-
-
-    public function EditOpeningBalance($id)
-    {
-        $accountInfo = AccountDetail::findOrFail($id);
-        $customers = Customer::where('status', '1')->OrderBy('name', 'asc')->get();
-        return view('admin.wholesaler.opening_balance.edit_opening', compact('accountInfo', 'customers'));
-    }
-
-    public function UpdateOpeningBalance(Request $request)
-    {
-
-        // dd($request->all());
-
-        $accountId = $request->id;
-
-        AccountDetail::findOrFail($accountId)->update([
-            'total_amount' => $request->total_amount,
-            'paid_amount' => $request->paid_amount,
-            'customer_id' => $request->customer_id,
-            'due_amount' => $request->total_amount - $request->paid_amount,
-            'date' => date('Y-m-d', strtotime($request->date)),
-        ]);
-        $notification = array(
-            'message' => 'Opening Balance Updated Successfully',
-            'alert_type' => 'success'
-        );
-
-        return redirect()->route('all.opening.balance')->with($notification);
-    }
-
-
-    public function DeleteOpeningBalance($id)
-    {
-        AccountDetail::findOrFail($id)->delete();
-
-        $notification = array(
-            'message' => 'Balance Deleted Successfully',
-            'alert-type' => 'success'
-        );
-        return redirect()->route('all.opening.balance')->with($notification);
-    }
-
-    // bill wise opeinig balance  added
+ 
+ 
+     public function DeleteOpeningBalance($id)
+     {
+         AccountDetail::findOrFail($id)->delete();
+ 
+         $notification = array(
+             'message' => 'Balance Deleted Successfully',
+             'alert-type' => 'success'
+         );
+         return redirect()->route('all.opening.balance')->with($notification);
+     }
+ 
+     // bill wise opeinig balance  added
 }

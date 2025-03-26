@@ -1,5 +1,4 @@
-@extends('admin.admin_master')
-@section('admin')
+<?php $__env->startSection('admin'); ?>
     <div class="page-content">
         <!--breadcrumb-->
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
@@ -35,56 +34,58 @@
                                 </tfoot>
                                 <tbody>
 
-                                    @php
+                                    <?php
                                         $grandTotal = 0;
-                                    @endphp
-                                    @foreach ($products as $key => $item)
+                                    ?>
+                                    <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
                                            
-                                            <td>{{ $key + 1 }}</td>
+                                            <td><?php echo e($key + 1); ?></td>
                                             <td>
                                                 <div class="d-flex align-items-center jusify-content-center">
-                                                    <img src=" {{ !empty($item->image) ? asset('upload/product_images/' . $item->image) : url('upload/no_image.jpg') }}"
-                                                        alt="{{ $item->name }}" width="40"
+                                                    <img src=" <?php echo e(!empty($item->image) ? asset('upload/product_images/' . $item->image) : url('upload/no_image.jpg')); ?>"
+                                                        alt="<?php echo e($item->name); ?>" width="40"
                                                         class="rounded-circle img-thumbnail">
-                                                    <span style="margin-left: 10px;">{{ $item->name }}</span>
+                                                    <span style="margin-left: 10px;"><?php echo e($item->name); ?></span>
                                                 </div>
                                             </td>
-                                            @php
+                                            <?php
                                                 $total = 0;
                                                 $productStock = App\Models\PurchaseStore::where('product_id', $item->id)
                                                     ->where('quantity', '!=', '0')
                                                     ->get();
-                                            @endphp
+                                            ?>
                                             <td>
                                                 <strong>
-                                                     <!--{{ $item->quantity }} -->
-                                                    {{ $productStock->sum('quantity') }}
-                                                    {{ $item['unit']['short_form'] }}
+                                                     <!--<?php echo e($item->quantity); ?> -->
+                                                    <?php echo e($productStock->sum('quantity')); ?>
+
+                                                    <?php echo e($item['unit']['short_form']); ?>
+
                                                 </strong>
                                             </td>
                                             <td>
-                                                @foreach ($productStock as $stock)
-                                                    @php
+                                                <?php $__currentLoopData = $productStock; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $stock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php
                                                         $total += $stock->quantity * $stock->unit_price;
-                                                    @endphp
-                                                @endforeach
-                                                {{ number_format($total) }}/-
-                                                @php
+                                                    ?>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php echo e(number_format($total)); ?>/-
+                                                <?php
                                                     $grandTotal += $total;
-                                                @endphp
+                                                ?>
                                             </td>
 
                                             <td>
                                                 <a style="margin-left: 5px;"
-                                                    href="{{ route('purchase.history', $item->id) }}" class="btn btn-info">
+                                                    href="<?php echo e(route('purchase.history', $item->id)); ?>" class="btn btn-info">
                                                     <i class="fa fa-eye" aria-hidden="true"></i> Purchase History
                                                 </a>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     <h4 class="text-muted text-center   ">Total Stock Amount:
-                                        {{ number_format($grandTotal) }}/-
+                                        <?php echo e(number_format($grandTotal)); ?>/-
                                     </h4>
                                 </tbody>
                             </table>
@@ -96,5 +97,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-    <script src="{{ asset('backend/assets/js/code.js') }}"></script>
-@endsection
+    <script src="<?php echo e(asset('backend/assets/js/code.js')); ?>"></script>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/stock/stock_all.blade.php ENDPATH**/ ?>

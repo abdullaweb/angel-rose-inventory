@@ -1,24 +1,23 @@
-@extends('admin.admin_master')
-@section('admin')
+<?php $__env->startSection('admin'); ?>
     <div class="page-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="card">
                     <div class="card-body">
                         <h2 class="text-muted">Add Opening Balance</h2>
-                        <form class="custom-validation" action="{{ route('store.opening.balance') }}" method="POST"
+                        <form class="custom-validation" action="<?php echo e(route('store.opening.balance')); ?>" method="POST"
                             novalidate="">
-                            @csrf
+                            <?php echo csrf_field(); ?>
                             <div class="row">
                                 <div class="col-md-12 mt-3">
                                     <div class="mb-2">
                                         <select name="customer_id" id="customer_id" class="form-control select2" required
                                             data-parsley-required-message="Customer is required" autocomplete="off">
                                             <option disabled selected>Select Wholesaler</option>
-                                            @foreach ($customers as $customer)
-                                                <option value="{{ $customer->id }}">{{ $customer->name }} -
-                                                    {{ $customer->phone }} </option>
-                                            @endforeach
+                                            <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($customer->id); ?>"><?php echo e($customer->name); ?> -
+                                                    <?php echo e($customer->phone); ?> </option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
                                 </div>
@@ -68,4 +67,6 @@
             });
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/wholesaler/opening_balance/add_opening.blade.php ENDPATH**/ ?>
