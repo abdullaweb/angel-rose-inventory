@@ -87,7 +87,7 @@
                                     <td>${ledger.status == 0 ? 'Due Payment' : (ledger.status == 1 ? 'Sales' : 'Opening')}
                                     ${ledger.paid_source ? ' (' + ledger.paid_source.toUpperCase() + ')' : ''}
                                         </td>
-                                    <td>${ledger.total_amount.toFixed(2)}</td>
+                                    <td>${ledger.total_amount ? ledger.total_amount.toFixed(2) : '0.00'}</td>
                                     <td>${ledger.paid_amount.toFixed(2) || '0.00'}</td>
                                     <td>${ledger.balance || '0.00'}</td>
                                 </tr>
@@ -132,4 +132,4 @@
 
 
 
-<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\angel-rose-inventory\resources\views/admin/ledger/customer_ledger.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/ledger/customer_ledger.blade.php ENDPATH**/ ?>

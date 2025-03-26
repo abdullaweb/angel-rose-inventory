@@ -129,4 +129,4 @@
 </body>
 
 </html>
-<?php /**PATH E:\laragon\www\angel-rose-inventory\resources\views/auth/login.blade.php ENDPATH**/ ?>
+<?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/auth/login.blade.php ENDPATH**/ ?>

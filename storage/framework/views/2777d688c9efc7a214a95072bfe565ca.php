@@ -211,4 +211,4 @@
     <!-- End Page-content -->
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\angel-rose-inventory\resources\views/admin/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/index.blade.php ENDPATH**/ ?>

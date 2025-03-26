@@ -89,7 +89,7 @@
                                     <td>${ledger.status == 0 ? 'Due Payment' : (ledger.status == 1 ? 'Sales' : 'Opening')}
                                     ${ledger.paid_source ? ' (' + ledger.paid_source.toUpperCase() + ')' : ''}
                                         </td>
-                                    <td>${ledger.total_amount.toFixed(2)}</td>
+                                    <td>${ledger.total_amount ? ledger.total_amount.toFixed(2) : '0.00'}</td>
                                     <td>${ledger.paid_amount.toFixed(2) || '0.00'}</td>
                                     <td>${ledger.balance || '0.00'}</td>
                                 </tr>

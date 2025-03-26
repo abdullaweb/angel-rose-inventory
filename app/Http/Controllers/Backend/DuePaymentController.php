@@ -63,6 +63,7 @@ class DuePaymentController extends Controller
             $account_details->paid_amount = $request->paid_amount;
             $account_details->due_amount = $account_balance - $request->paid_amount;
             $account_details->customer_id = $company_id;
+            $account_details->due_payment_id = $due_payment->id;
             $account_details->date = $request->date;
             $account_details->balance = $account_balance - $request->paid_amount;
             $account_details->save();
@@ -92,6 +93,7 @@ class DuePaymentController extends Controller
         $payment_due_amount = Payment::where('customer_id', $due_payment_info->customer_id)->sum('due_amount');
 
         $account_details = AccountDetail::where('customer_id', $due_payment_info->customer_id)
+            ->where('due_payment_id', $id)
             ->latest('id')
             ->first();
         
@@ -106,6 +108,7 @@ class DuePaymentController extends Controller
         DuePayment::where('id', $id)->delete();
         
         $accountDetail = AccountDetail::where('customer_id', $due_payment->customer_id)
+            ->where('due_payment_id', $id)
             ->where('paid_amount', $due_payment->paid_amount)
             ->where('date', $due_payment->date)
             ->first();
@@ -156,6 +159,7 @@ class DuePaymentController extends Controller
                 $account_details->paid_amount = $request->paid_amount;
                 $account_details->due_amount = $account_balance - $request->paid_amount;
                 $account_details->customer_id = $company_id;
+                $account_details->due_payment_id = $due_payment->id;
                 $account_details->date = $request->date;
                 $account_details->balance = $account_balance - $request->paid_amount;
                 $account_details->save();
@@ -183,6 +187,7 @@ class DuePaymentController extends Controller
         $due_payment_details = DuePaymentDetail::where('due_payment_id', $due_payment->id)->get();
 
         $accountDetail = AccountDetail::where('customer_id', $due_payment->customer_id)
+            ->where('due_payment_id', $id)
             ->where('paid_amount', $due_payment->paid_amount)
             ->where('date', $due_payment->date)
             ->first();
@@ -234,7 +239,7 @@ class DuePaymentController extends Controller
         $payment_due_amount = Payment::where('customer_id', $request->company_id)->sum('due_amount');
 
         $accountBill = AccountDetail::where('customer_id', $customerInfo->id)->latest('id')->first();
-            $due_amount = $accountBill->balance ?? $payment_due_amount;
+        $due_amount = $accountBill->balance ?? $payment_due_amount;
 
         $invoiceAll = NULL;
 

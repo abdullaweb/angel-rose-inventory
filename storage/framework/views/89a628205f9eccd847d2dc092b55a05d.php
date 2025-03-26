@@ -362,4 +362,4 @@
          <!-- Sidebar -->
      </div>
  </div>
-<?php /**PATH E:\laragon\www\angel-rose-inventory\resources\views/admin/body/sidebar.blade.php ENDPATH**/ ?>
+<?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/body/sidebar.blade.php ENDPATH**/ ?>
