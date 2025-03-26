@@ -269,32 +269,46 @@ class AccountController extends Controller
  
      public function UpdateOpeningBalance(Request $request)
      {
- 
-        //  dd($request->all());
- 
-         $accountId = $request->id;
 
-         $previousAccount = AccountDetail::where('id', '<' , $accountId)->where('customer_id', $request->customer_id)->latest('id')->first();
+        DB::beginTransaction();
+        try{
+            $accountId = $request->id;
 
-         $previousBalance = $previousAccount->balance;
+            $previousAccount = AccountDetail::where('id', '<' , $accountId)->where('customer_id', $request->customer_id)->latest('id')->first();
+
+            $previousBalance = $previousAccount->balance;
+    
+            AccountDetail::findOrFail($accountId)->update([
+                'total_amount' => $request->total_amount,
+                'paid_amount' => $request->paid_amount,
+                'customer_id' => $request->customer_id,
+                'due_amount' => $request->total_amount - $request->paid_amount,
+                'balance' => $previousBalance + ($request->total_amount - $request->paid_amount),
+                'date' => date('Y-m-d', strtotime($request->date)),
+            ]);
+
+            $this->resetAccountBalance(AccountDetail::findOrFail($accountId));
+
+            DB::commit();
+
+            $notification = array(
+                'message' => 'Opening Balance Updated Successfully',
+                'alert_type' => 'success'
+            );
+    
+            return redirect()->route('all.opening.balance')->with($notification);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Storing Opening Balance Error' . $e->getMessage() . 'Line: ' . $e->getLine());
+
+            $notification = array(
+                'message' => 'Opening Balance Not Added!',
+                'alert-type' => 'error',
+            );
+            return redirect()->back()->with($notification);
+        }
  
-         AccountDetail::findOrFail($accountId)->update([
-             'total_amount' => $request->total_amount,
-             'paid_amount' => $request->paid_amount,
-             'customer_id' => $request->customer_id,
-             'due_amount' => $request->total_amount - $request->paid_amount,
-             'balance' => $previousBalance + ($request->total_amount - $request->paid_amount),
-             'date' => date('Y-m-d', strtotime($request->date)),
-         ]);
-
-         $this->resetAccountBalance(AccountDetail::findOrFail($accountId));
-
-         $notification = array(
-             'message' => 'Opening Balance Updated Successfully',
-             'alert_type' => 'success'
-         );
- 
-         return redirect()->route('all.opening.balance')->with($notification);
+         
      }
 
      private function resetAccountBalance($accountID)
@@ -328,15 +342,31 @@ class AccountController extends Controller
  
      public function DeleteOpeningBalance($id)
      {
-         AccountDetail::findOrFail($id)->delete();
+        DB::beginTransaction();
+        try {
+            $accountDetails = AccountDetail::findOrFail($id);
+            AccountDetail::where('id', '>', $accountDetails->id)->decrement('balance', $accountDetails->balance);
+            
+            AccountDetail::findOrFail($id)->delete();
 
-         $this->resetAccountBalance(AccountDetail::findOrFail($id));
- 
-         $notification = array(
-             'message' => 'Balance Deleted Successfully',
-             'alert-type' => 'success'
-         );
-         return redirect()->route('all.opening.balance')->with($notification);
+            DB::commit();
+
+            $notification = array(
+                'message' => 'Balance Deleted Successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->route('all.opening.balance')->with($notification);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Storing Opening Balance Error' . $e->getMessage() . 'Line: ' . $e->getLine());
+
+            $notification = array(
+                'message' => 'Opening Balance Not Delete!',
+                'alert-type' => 'error',
+            );
+            return redirect()->back()->with($notification);
+
+        }
      }
  
      // bill wise opeinig balance  added
