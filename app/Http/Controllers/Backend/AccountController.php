@@ -22,7 +22,7 @@ class AccountController extends Controller
     /*######### start expense method  #################**/
     public function AllExpense()
     {
-        $allExpense = Expense::all();
+        $allExpense = Expense::latest()->get();
         return view('admin.accounts.expense_page.all_expense', compact('allExpense'));
     }
     public function AddExpense()

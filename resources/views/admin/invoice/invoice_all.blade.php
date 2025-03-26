@@ -65,14 +65,6 @@
                                             </td>
 
                                             <td>
-
-                                                @if ($item['payment']['due_amount'] != 0)
-                                                    <a title="Paid Customer Due Bill" style="margin-left: 5px;"
-                                                        href="{{ route('edit.credit.customer', $item->id) }}"
-                                                        class="btn btn-info">
-                                                        <i class="fas fa-edit"></i> Due Payment
-                                                    </a>
-                                                @endif
                                                 <a title="Print Invoice" style="margin-left: 5px;"
                                                     href="{{ route('invoice.print', $item->id) }}" class="btn btn-success">
                                                     <i class="fa fa-print" aria-hidden="true"></i>
