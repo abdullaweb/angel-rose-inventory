@@ -1,11 +1,10 @@
-@extends('admin.admin_master')
-@section('admin')
+<?php $__env->startSection('admin'); ?>
     <div class="page-content">
         <!--breadcrumb-->
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">Invoice All</h6>
             <h6 class="m-0 font-weight-bold text-primary">
-                <a href="{{ route('invoice.add') }}">
+                <a href="<?php echo e(route('invoice.add')); ?>">
                     <button class="btn btn-info"><i class="fa fa-plus-circle" aria-hidden="true"> Add Invoice </i></button>
                 </a>
             </h6>
@@ -40,57 +39,63 @@
                                     </tr>
                                 </tfoot>
                                 <tbody>
-                                    @foreach ($allInvoice as $key => $item)
+                                    <?php $__currentLoopData = $allInvoice; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
-                                            <td>{{ $key + 1 }}</td>
+                                            <td><?php echo e($key + 1); ?></td>
                                             <td>
-                                                {{ $item['payment']['customer']['name'] ?? 'N/A' }}
-                                                @if ($item['payment']['customer']['status'] == '1')
+                                                <?php echo e($item['payment']['customer']['name'] ?? 'N/A'); ?>
+
+                                                <?php if($item['payment']['customer']['status'] == '1'): ?>
                                                     <span class="badge bg-info">Wholesaler</span>
-                                                @elseif ($item['payment']['customer']['status'] == '0')
+                                                <?php elseif($item['payment']['customer']['status'] == '0'): ?>
                                                     <span class="badge bg-info">Retail</span>
-                                                @endif
+                                                <?php endif; ?>
                                             </td>
                                             <td>
-                                                #{{ $item->invoice_no }}
+                                                #<?php echo e($item->invoice_no); ?>
+
                                             </td>
                                             <td>
-                                                {{ date('d-m-Y', strtotime($item->date)) }}
+                                                <?php echo e(date('d-m-Y', strtotime($item->date))); ?>
+
                                             </td>
                                             <td>
-                                                BDT {{ $item['payment']['total_amount'] }}
+                                                BDT <?php echo e($item['payment']['total_amount']); ?>
+
                                             </td>
                                             <td>
-                                                BDT {{ $item['payment']['due_amount'] }}
+                                                BDT <?php echo e($item['payment']['due_amount']); ?>
+
                                             </td>
 
                                             <td>
 
-                                                @if ($item['payment']['due_amount'] != 0)
+                                                <?php if($item['payment']['due_amount'] != 0): ?>
                                                     <a title="Paid Customer Due Bill" style="margin-left: 5px;"
-                                                        href="{{ route('edit.credit.customer', $item->id) }}"
+                                                        href="<?php echo e(route('edit.credit.customer', $item->id)); ?>"
                                                         class="btn btn-info">
                                                         <i class="fas fa-edit"></i> Due Payment
                                                     </a>
-                                                @endif
+                                                <?php endif; ?>
                                                 <a title="Print Invoice" style="margin-left: 5px;"
-                                                    href="{{ route('invoice.print', $item->id) }}" class="btn btn-success">
+                                                    href="<?php echo e(route('invoice.print', $item->id)); ?>" class="btn btn-success">
                                                     <i class="fa fa-print" aria-hidden="true"></i>
                                                 </a>
                                                 <a title="Edit Invoice" style="margin-left: 5px;"
-                                                   href="{{ route('invoice.edit', $item->id) }}" class="btn btn-info">
+                                                   href="<?php echo e(route('invoice.edit', $item->id)); ?>" class="btn btn-info">
                                                    <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a title="Delete Invoice" style="margin-left: 5px;"
-                                                    href="{{ route('invoice.delete', $item->id) }}" class="btn btn-danger" id="delete">
+                                                    href="<?php echo e(route('invoice.delete', $item->id)); ?>" class="btn btn-danger" id="delete">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
                             </table>
-                            {{ $allInvoice->links() }}
+                            <?php echo e($allInvoice->links()); ?>
+
                         </div>
                     </div>
                 </div>
@@ -99,5 +104,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-    <script src="{{ asset('backend/assets/js/code.js') }}"></script>
-@endsection
+    <script src="<?php echo e(asset('backend/assets/js/code.js')); ?>"></script>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/invoice/invoice_all.blade.php ENDPATH**/ ?>

@@ -86,7 +86,9 @@
                                                             </a>
                                                             <?php endif; ?>
                                                         <?php elseif($details->status == '0'): ?>
-                                                            Due Payment
+                                                            <a href="<?php echo e(route('edit.due.payment', $details->due_payment_id)); ?>">
+                                                                Due Payment
+                                                            </a>
                                                         <?php elseif($details->status == '2'): ?>
                                                             Opening Balance
                                                         <?php endif; ?>

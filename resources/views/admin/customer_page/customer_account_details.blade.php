@@ -88,7 +88,9 @@
                                                             </a>
                                                             @endif
                                                         @elseif($details->status == '0')
-                                                            Due Payment
+                                                            <a href="{{ route('edit.due.payment', $details->due_payment_id) }}">
+                                                                Due Payment
+                                                            </a>
                                                         @elseif($details->status == '2')
                                                             Opening Balance
                                                         @endif

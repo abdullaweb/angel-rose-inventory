@@ -60,9 +60,11 @@ class DuePaymentController extends Controller
 
             // Update account balance
             $account_details = new AccountDetail();
+            $account_details->total_amount = 0;
             $account_details->paid_amount = $request->paid_amount;
             $account_details->due_amount = $account_balance - $request->paid_amount;
             $account_details->customer_id = $company_id;
+
             $account_details->due_payment_id = $due_payment->id;
             $account_details->date = $request->date;
             $account_details->balance = $account_balance - $request->paid_amount;
@@ -103,27 +105,32 @@ class DuePaymentController extends Controller
         return view('admin.due_payment.edit_due', compact('due_payment_info', 'companies', 'due_amount', 'companyInfo'));
     }
 
-    private function resetDuePayment($due_payment, $id)
-    {
-        DuePayment::where('id', $id)->delete();
-        
+    private function resetDuePayment($due_payment)
+    {        
         $accountDetail = AccountDetail::where('customer_id', $due_payment->customer_id)
-            ->where('due_payment_id', $id)
-            ->where('paid_amount', $due_payment->paid_amount)
-            ->where('date', $due_payment->date)
+            ->where('due_payment_id', $due_payment->id)
             ->first();
         
         if ($accountDetail) {
-            $nextAccountDetail = AccountDetail::where('customer_id', $due_payment->customer_id)
+            $nextAccountDetails = AccountDetail::where('customer_id', $due_payment->customer_id)
                 ->where('id', '>', $accountDetail->id)
+                ->orderBy('id')
                 ->get();
+
+            $previous_balance = $accountDetail->balance;
         
-            foreach ($nextAccountDetail as $next) {
-                $next->balance = $next->balance + $due_payment->paid_amount;
+            foreach ($nextAccountDetails as $next) {
+                if($next->total_amount > 0){
+                    $next->balance = $next->total_amount - $next->paid_amount + $previous_balance;
+                    $next->due_amount = $next->balance;
+                }elseif($next->total_amount == 0){
+                    $next->balance = $previous_balance - $next->paid_amount;
+                    $next->due_amount = $next->balance;
+                }
                 $next->save();
+                $previous_balance = $next->balance;
             }
 
-            $accountDetail->delete();
         }
         
     }
@@ -137,10 +144,9 @@ class DuePaymentController extends Controller
                 $company_id = $due_payment->customer_id;
                 $companyInfo = Customer::where('id', $company_id)->first();
 
-                $this->resetDuePayment($due_payment, $id);
+                
 
                 // Save payment request without modifying any balances
-                $due_payment = new DuePayment();
                 $due_payment->customer_id = $company_id;
                 $due_payment->paid_amount = $request->paid_amount;
                 $due_payment->date = $request->date;
@@ -150,12 +156,11 @@ class DuePaymentController extends Controller
                 $due_payment->save();
 
                 // Get account details
-                $account_details = AccountDetail::where('customer_id', $company_id)->latest('id')->first();
+                $account_details = AccountDetail::where('customer_id', $company_id)->where('due_payment_id', $id)->latest('id')->first();
                 $due_amount = Payment::where('customer_id', $company_id)->sum('due_amount');
-                $account_balance = $account_details->balance ?? $due_amount;
+                $account_balance = ($account_details->balance + $account_details->paid_amount) ?? $due_amount;
 
                 // Update account balance
-                $account_details = new AccountDetail();
                 $account_details->paid_amount = $request->paid_amount;
                 $account_details->due_amount = $account_balance - $request->paid_amount;
                 $account_details->customer_id = $company_id;
@@ -163,6 +168,8 @@ class DuePaymentController extends Controller
                 $account_details->date = $request->date;
                 $account_details->balance = $account_balance - $request->paid_amount;
                 $account_details->save();
+
+                $this->resetDuePayment($due_payment);
 
                 DB::commit();
 
@@ -174,7 +181,11 @@ class DuePaymentController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Error updating due payment: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'An error occurred while updating the due payment.']);
+            $notification = array(
+                'message' => 'An error occurred while updating the due payment.',
+                'alert-type' => 'error',
+            );
+            return redirect()->back()->with($notification);
         }
     }
 
@@ -219,22 +230,6 @@ class DuePaymentController extends Controller
     public function GetDuePayment(Request $request)
     {
         $customerInfo = Customer::where('id', $request->company_id)->first();
-        // if($companyInfo->status == '1') {
-        //     $accountBill = AccountDetail::where('company_id', $companyInfo->id)->latest('id')->first();
-        //     $payment_due_amount = Payment::where('company_id', $request->company_id)->sum('due_amount');
-
-        //     $due_amount = $accountBill->balance ?? $payment_due_amount;
-
-        //     $invoiceAll = Invoice::where('company_id', $request->company_id)->whereHas('payment', function ($query) {
-        //         $query->where('due_amount', '!=', 0);
-        //     })->get();
-        // } elseif($companyInfo->status == '0') {
-        //     $accountBill = AccountDetail::where('company_id', $companyInfo->id)->latest('id')->first();
-        //     $due_amount = $accountBill->balance ?? 0;
-
-        //     $invoiceAll = NULL;
-           
-        // }
 
         $payment_due_amount = Payment::where('customer_id', $request->company_id)->sum('due_amount');
 
