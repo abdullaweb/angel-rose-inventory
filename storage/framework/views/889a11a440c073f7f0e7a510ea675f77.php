@@ -16,7 +16,7 @@
                                     <select name="company_id" id="company_id" class="form-control select2" required="">
                                         <option value="" selected disabled>Select Company</option>
                                         <?php $__currentLoopData = $companies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $company): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <option value="<?php echo e($company->id); ?>" <?php echo e($company->id == $due_payment_info->customer_id ? 'selected' : ''); ?>><?php echo e($company->name); ?></option>
+                                            <option value="<?php echo e($company->id); ?>" <?php echo e($company->id == $due_payment_info->customer_id ? 'selected' : ''); ?>><?php echo e($company->name); ?> - <?php echo e($company->phone); ?></option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>

@@ -14,7 +14,7 @@
                             <select id="customer" class="form-select select2">
                                 <option value="">-- Select Customer --</option>
                                 <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($customer->id); ?>"><?php echo e($customer->name); ?></option>
+                                    <option value="<?php echo e($customer->id); ?>"><?php echo e($customer->name); ?> - <?php echo e($customer->phone); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
@@ -84,7 +84,7 @@
                                 <tr>
                                     <td> ${serial++}</td>
                                     <td>${ledger.date}</td>
-                                    <td>${ledger.status == 0 ? 'Due Payment' : (ledger.status == 1 ? `<a href="invoice/print/${ledger.invoice_id}" style="color: blue; text-decoration: underline;">Sales</a>` : 'Opening')}
+                                    <td>${ledger.status == 0 ? `<a href="edit/due-payment/${ledger.due_payment_id}" style="color: blue; text-decoration: underline;">Due Payment</a>` : (ledger.status == 1 ? `<a href="invoice/print/${ledger.invoice_id}" style="color: blue; text-decoration: underline;">Sales</a>` : 'Opening')}
                                     ${ledger.paid_source ? ' (' + ledger.paid_source.toUpperCase() + ')' : ''}
                                         </td>
                                     <td>${ledger.total_amount ? ledger.total_amount.toFixed(2) : '0.00'}</td>
