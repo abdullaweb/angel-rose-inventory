@@ -41,7 +41,7 @@
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
                                         <td>
-                                            {{ $item->company->name ?? null}}
+                                            {{ $item->company->name ?? null}}  {{ $item->company->phone ?? null}} 
                                         </td>
                                         <td>
                                             {{ $item->date }}
