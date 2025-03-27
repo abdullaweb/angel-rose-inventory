@@ -15,7 +15,7 @@
                                     <select name="company_id" id="company_id" class="form-control select2" required="">
                                         <option value="" selected disabled>Select Company</option>
                                         @foreach ($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                            <option value="{{ $company->id }}">{{ $company->name }} - {{ $customer->phone}} </option>
                                         @endforeach
                                     </select>
                                 </div>
