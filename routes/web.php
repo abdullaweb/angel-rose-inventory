@@ -88,6 +88,7 @@ Route::middleware('auth', 'role:admin')->group(function () {
 
         //dynamic query
         Route::get('/dynamic/query/customer', 'DynamicQueryCustomer')->name('dynamic.query.customer');
+        Route::get('/customer/previous/due/{id}', 'CustomerPreviousDue')->name('get.customer.due');
     });
 
     // Product Adjustment All Route
@@ -241,7 +242,7 @@ Route::middleware('auth', 'role:admin')->group(function () {
     });
 
 
-    
+
      // return product all route
     Route::controller(ReturnProductController::class)->group(function () {
         Route::get('/all/return/product', 'AllReturnProduct')->name('all.return.product');
@@ -350,7 +351,7 @@ Route::middleware('auth', 'role:admin')->group(function () {
         // invoice report
         Route::get('daily/invoice/report', 'DailyInvoiceReport')->name('daily.invoice.report');
         Route::get('daily/invoice/pdf', 'DailyInvoiceReportPdf')->name('daily.invoice.pdf');
-        
+
         //profit
         Route::get('profit/report', 'ProfitReport')->name('profit.report');
         Route::post('/profit/filter', 'ProfitResult')->name('profit.filter');

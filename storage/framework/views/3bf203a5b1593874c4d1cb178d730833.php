@@ -65,7 +65,7 @@
                                                     <tr class="tr">
                                                         <td class="text-center">
                                                             <select name="category_id[]" id="category_1"
-                                                                class="form-control form-select select2 category"
+                                                                class="form-control form-select category"
                                                                 required=""
                                                                 data-parsley-required-message="Category Id is required">
                                                                 <option selected value="">Select Category</option>
@@ -80,7 +80,7 @@
                                                         </td>
                                                         <td class="text-center">
                                                             <select name="product_id[]" id="product_id_1"
-                                                                class="form-control form-select select2" required=""
+                                                                class="form-control form-select" required=""
                                                                 data-parsley-required-message="Product Id is required">
                                                                 <option selected value="">Select Product</option>
                                                                 <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -132,27 +132,42 @@
                                                     <th>
                                                         <input type="number" name="discount_rate" id="discount_rate" class="form-control discount_rate" value="<?php echo e($invoice->payment->discount_amount); ?>" placeholder="Discount Amount">
                                                     </th>
-                                                    <?php else: ?>
+                                                    <?php elseif($invoice->payment->discount_type == 'percentage'): ?>
                                                     <th>
-                                                        <input type="number" name="discount_rate" id="discount_rate" class="form-control discount_rate" value="<?php echo e(round($invoice->payment->discount_amount / $invoice->payment->total_amount * 100)); ?>" placeholder="Discount Rate">
+                                                        <input type="number" name="discount_rate" id="discount_rate" class="form-control discount_rate" value="<?php echo e(round($invoice->payment->discount_amount / ($invoice->payment->total_amount + $invoice->payment->discount_amount) * 100)); ?>" placeholder="Discount Rate">
                                                     </th>
                                                     <?php endif; ?>
                                                 </tr>
                                                 <tr>
-                                                    <th colspan="4">
-                                                        <label for="">Paid Amount</label>
-                                                        <input type="text"
-                                                            placeholder="Enter Paid Amount" class="form-control"
-                                                            value="<?php echo e($invoice->payment->paid_amount); ?>" readonly>
-                                                    </th>
+                                                    <th colspan="4" class="text-end">Total Amount: </th>
                                                     <th>
-                                                        <label for="">Total Amount</label>
                                                         <input type="text" class="form-control"
                                                             name="estimated_total" id="estimated_total"
                                                             placeholder="Grand Total"
                                                             value="<?php echo e($invoice->payment->total_amount); ?>" readonly>
 
                                                         <input type="hidden" readonly class="form-control" name="total_quantity" id="total_quantity" placeholder="Total Quantity" value="<?php echo e($invoice->invoice_details->sum('selling_qty')); ?>">
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="4" class="text-end">Paid Amount: </th>
+                                                    <th>
+                                                        <input type="text"
+                                                            placeholder="Enter Paid Amount" class="form-control"
+                                                            value="<?php echo e($invoice->payment->paid_amount); ?>" readonly>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <?php
+                                                    $accountDetail = App\Models\AccountDetail::where('customer_id', $invoice->customer_id)->latest()->first();
+                                                    ?>
+                                                    <th colspan="4" class="text-end">
+                                                        Previous Due:
+                                                    </th>
+                                                    <th>
+                                                        <input type="number" name="previous_due" id="previous_due"
+                                                            class="form-control" value="<?php echo e($accountDetail->balance); ?>" placeholder="Previous Due"
+                                                            readonly>
                                                     </th>
                                                 </tr>
                                             </tfoot>
@@ -521,4 +536,4 @@
     </script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/invoice/invoice_edit.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\laragon\www\angelrose-software\resources\views/admin/invoice/invoice_edit.blade.php ENDPATH**/ ?>

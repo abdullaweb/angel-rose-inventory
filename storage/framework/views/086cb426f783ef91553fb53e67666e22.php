@@ -12,4 +12,4 @@
         </div>
     </div>
 </footer>
-<?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/body/footer.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\laragon\www\angelrose-software\resources\views/admin/body/footer.blade.php ENDPATH**/ ?>

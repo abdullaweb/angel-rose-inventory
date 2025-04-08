@@ -25,7 +25,7 @@ class InvoiceController extends Controller
     public function InvoiceAll()
     {
         $allInvoice = Invoice::where('status', 1)->where('return_status', 0)->orderBy('id', 'desc')->latest()->paginate(10);
-      
+
         $duplicates = Invoice::select('invoice_no', DB::raw('COUNT(*) as count'))
             ->groupBy('invoice_no')
             ->whereYear('date', '2025')
@@ -163,7 +163,8 @@ class InvoiceController extends Controller
 
             // Handle Payment & Account Details
             $latestAccount = AccountDetail::where('customer_id', $invoice->customer_id)->latest('id')->first();
-            $balance = $latestAccount ? $latestAccount->balance + $request->estimated_total : $request->estimated_total;
+            // $balance = $latestAccount ? $latestAccount->balance + $request->estimated_total : $request->estimated_total;
+            $previous_balance = $latestAccount ? $latestAccount->balance : 0;
 
             $payment_data = [
                 'invoice_id'      => $invoice->id,
@@ -193,7 +194,7 @@ class InvoiceController extends Controller
                 'paid_source'   => $request->paid_source,
                 'bank_name'     => $bank_name,
                 'note'          => $note,
-                'balance'       => $balance,
+                // 'balance'       => $balance,
             ];
 
             // Payment Status Handling
@@ -204,6 +205,8 @@ class InvoiceController extends Controller
 
                 $account_details_data['paid_amount'] = $request->estimated_total;
                 $account_details_data['due_amount'] = 0;
+                $account_details_data['balance'] = $previous_balance;
+
             } elseif ($request->paid_status == 'full_due') {
                 $payment_data['paid_amount'] = 0;
                 $payment_data['due_amount'] = $request->estimated_total;
@@ -211,6 +214,7 @@ class InvoiceController extends Controller
 
                 $account_details_data['paid_amount'] = 0;
                 $account_details_data['due_amount'] = $request->estimated_total;
+                $account_details_data['balance'] = $previous_balance + $request->estimated_total;
             } elseif ($request->paid_status == 'partial_paid') {
                 $payment_data['paid_amount'] = $request->paid_amount;
                 $payment_data['due_amount'] = $request->estimated_total - $request->paid_amount;
@@ -218,6 +222,7 @@ class InvoiceController extends Controller
 
                 $account_details_data['paid_amount'] = $request->paid_amount;
                 $account_details_data['due_amount'] = $request->estimated_total - $request->paid_amount;
+                $account_details_data['balance'] = $previous_balance + $request->estimated_total - $request->paid_amount;
             }
 
             Payment::create($payment_data);
@@ -364,7 +369,7 @@ class InvoiceController extends Controller
             $previousBalance = $latestAccount->balance - $latestAccount->due_amount;
 
             // dd($latestAccount->balance, $previousBalance);
-           
+
             $payment_data = [
                 'invoice_id'      => $invoice->id,
                 'customer_id'     => $invoice->customer_id,
@@ -472,7 +477,7 @@ class InvoiceController extends Controller
             $product->delete();
         }
 
-    
+
 
         // Delete related payment and account details
         InvoiceDetail::where('invoice_id', $invoice_id)->delete();
@@ -482,11 +487,11 @@ class InvoiceController extends Controller
 
     //account details balance update
     private function resetAccountBalance($invoice)
-    {        
+    {
         $accountDetail = AccountDetail::where('customer_id', $invoice->customer_id)
             ->where('invoice_id', $invoice->id)
             ->first();
-        
+
         if ($accountDetail) {
             $nextAccountDetails = AccountDetail::where('customer_id', $invoice->customer_id)
                 ->where('id', '>', $accountDetail->id)
@@ -494,7 +499,7 @@ class InvoiceController extends Controller
                 ->get();
 
             $previous_balance = $accountDetail->balance;
-        
+
             foreach ($nextAccountDetails as $next) {
                 if($next->total_amount > 0){
                     $next->balance = $next->total_amount - $next->paid_amount + $previous_balance;
@@ -508,7 +513,7 @@ class InvoiceController extends Controller
             }
 
         }
-        
+
     }
 
 
@@ -532,36 +537,36 @@ class InvoiceController extends Controller
         DB::beginTransaction();
         try {
             $invoice = Invoice::findOrFail($id);
-    
+
             // Delete related invoice details, payments, and payment details in batch
             InvoiceDetail::where('invoice_id', $invoice->id)->delete();
             Payment::where('invoice_id', $invoice->id)->delete();
             PaymentDetail::where('invoice_id', $invoice->id)->delete();
-    
+
             // Fetch and delete AccountDetails while adjusting future balances
             $accountDetails = AccountDetail::where('invoice_id', $invoice->id)->get();
             foreach ($accountDetails as $account) {
                 AccountDetail::where('customer_id', $invoice->customer_id)
                     ->where('id', '>', $account->id)
                     ->decrement('balance', $account->balance);
-    
+
                 $account->delete();
             }
-    
+
             // Restore stock quantities and delete sales profit entries
             $salesProducts = SalesProfit::where('invoice_id', $invoice->id)->get();
             foreach ($salesProducts as $sale) {
                 PurchaseStore::where('id', $sale->purchase_id)
                     ->increment('quantity', $sale->selling_qty);
-    
+
                 $sale->delete();
             }
-    
+
             // Delete invoice
             $invoice->delete();
-    
+
             DB::commit();
-    
+
             return redirect()->back()->with([
                 'message' => 'Invoice Deleted Successfully',
                 'alert-type' => 'success',
@@ -569,14 +574,14 @@ class InvoiceController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             Log::error("Error Deleting Invoice: {$th->getMessage()} in {$th->getFile()} at line {$th->getLine()}");
-    
+
             return redirect()->back()->with([
                 'message' => 'Sorry, Something went wrong',
                 'alert-type' => 'error',
             ]);
         }
     }
-    
+
 
     public function UniqueNumber()
     {

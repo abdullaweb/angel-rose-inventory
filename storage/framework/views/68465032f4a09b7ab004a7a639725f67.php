@@ -45,4 +45,4 @@
 </body>
 
 </html>
-<?php /**PATH E:\laragon\www\angel_rose_inventory\resources\views/admin/admin_master.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\laragon\www\angelrose-software\resources\views/admin/admin_master.blade.php ENDPATH**/ ?>

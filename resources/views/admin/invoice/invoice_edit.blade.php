@@ -65,7 +65,7 @@
                                                     <tr class="tr">
                                                         <td class="text-center">
                                                             <select name="category_id[]" id="category_1"
-                                                                class="form-control form-select select2 category"
+                                                                class="form-control form-select category"
                                                                 required=""
                                                                 data-parsley-required-message="Category Id is required">
                                                                 <option selected value="">Select Category</option>
@@ -79,7 +79,7 @@
                                                         </td>
                                                         <td class="text-center">
                                                             <select name="product_id[]" id="product_id_1"
-                                                                class="form-control form-select select2" required=""
+                                                                class="form-control form-select" required=""
                                                                 data-parsley-required-message="Product Id is required">
                                                                 <option selected value="">Select Product</option>
                                                                 @foreach ($products as $product)
@@ -130,27 +130,42 @@
                                                     <th>
                                                         <input type="number" name="discount_rate" id="discount_rate" class="form-control discount_rate" value="{{ $invoice->payment->discount_amount }}" placeholder="Discount Amount">
                                                     </th>
-                                                    @else
+                                                    @elseif ($invoice->payment->discount_type == 'percentage')
                                                     <th>
-                                                        <input type="number" name="discount_rate" id="discount_rate" class="form-control discount_rate" value="{{ round($invoice->payment->discount_amount / $invoice->payment->total_amount * 100) }}" placeholder="Discount Rate">
+                                                        <input type="number" name="discount_rate" id="discount_rate" class="form-control discount_rate" value="{{ round($invoice->payment->discount_amount / ($invoice->payment->total_amount + $invoice->payment->discount_amount) * 100) }}" placeholder="Discount Rate">
                                                     </th>
                                                     @endif
                                                 </tr>
                                                 <tr>
-                                                    <th colspan="4">
-                                                        <label for="">Paid Amount</label>
-                                                        <input type="text"
-                                                            placeholder="Enter Paid Amount" class="form-control"
-                                                            value="{{ $invoice->payment->paid_amount }}" readonly>
-                                                    </th>
+                                                    <th colspan="4" class="text-end">Total Amount: </th>
                                                     <th>
-                                                        <label for="">Total Amount</label>
                                                         <input type="text" class="form-control"
                                                             name="estimated_total" id="estimated_total"
                                                             placeholder="Grand Total"
                                                             value="{{ $invoice->payment->total_amount }}" readonly>
 
                                                         <input type="hidden" readonly class="form-control" name="total_quantity" id="total_quantity" placeholder="Total Quantity" value="{{ $invoice->invoice_details->sum('selling_qty') }}">
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="4" class="text-end">Paid Amount: </th>
+                                                    <th>
+                                                        <input type="text"
+                                                            placeholder="Enter Paid Amount" class="form-control"
+                                                            value="{{ $invoice->payment->paid_amount }}" readonly>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    @php
+                                                    $accountDetail = App\Models\AccountDetail::where('customer_id', $invoice->customer_id)->latest()->first();
+                                                    @endphp
+                                                    <th colspan="4" class="text-end">
+                                                        Previous Due:
+                                                    </th>
+                                                    <th>
+                                                        <input type="number" name="previous_due" id="previous_due"
+                                                            class="form-control" value="{{ $accountDetail->balance  }}" placeholder="Previous Due"
+                                                            readonly>
                                                     </th>
                                                 </tr>
                                             </tfoot>

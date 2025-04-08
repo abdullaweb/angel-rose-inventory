@@ -45,7 +45,7 @@ class CustomerController extends Controller
             $company = Customer::orderBy('id', 'desc')->first()->id;
             $companyId = $company + 1;
         }
-    // dd($companyId);
+        // dd($companyId);
         if ($companyId < 10) {
             $id_no = '000' . $companyId; //0009
         } elseif ($companyId < 100) {
@@ -54,9 +54,9 @@ class CustomerController extends Controller
             $id_no = '0' . $companyId; //0999
             $id_no = '0' . $companyId; //0999
         } else {
-            $id_no = $companyId; 
+            $id_no = $companyId;
         }
-        
+
         $check_year = date('Y');
 
         $name = $request->name;
@@ -214,7 +214,7 @@ class CustomerController extends Controller
             $account_details->note = $note;
             $account_details->date = date('Y-m-d', strtotime($request->date));
 
-          
+
 
             if ($request->paid_status == 'full_paid') {
                 $payment->paid_amount = Payment::where('invoice_id', $invoice_id)->first()['paid_amount'] + $request->new_paid_amount;
@@ -223,7 +223,6 @@ class CustomerController extends Controller
 
                 $account_details->paid_amount = $request->new_paid_amount;
                 $account_details->due_amount = '0';
-
             } elseif ($request->paid_status == 'partial_paid') {
                 $payment->paid_amount = Payment::where('invoice_id', $invoice_id)->first()['paid_amount'] + $request->paid_amount;
                 $payment->due_amount = Payment::where('invoice_id', $invoice_id)->first()['due_amount'] - $request->paid_amount;
@@ -231,7 +230,6 @@ class CustomerController extends Controller
 
                 $account_details->paid_amount = $request->paid_amount;
                 $account_details->due_amount = $payment->due_amount;
-
             }
 
             $payment->save();
@@ -245,7 +243,7 @@ class CustomerController extends Controller
             $payment_details->updated_by = Auth::user()->id;
             $payment_details->save();
             $account_details->save();
-           
+
             $notification = array(
                 'message' => 'Payment Updated Successfully!',
                 'alert_type' => 'success',
@@ -301,7 +299,8 @@ class CustomerController extends Controller
         return response()->json($customers);
     }
 
-    public function DynamicQueryCustomer(){
+    public function DynamicQueryCustomer()
+    {
         // $payment = Payment::get();
         // dd($payment->sum('total_amount'), $payment->sum('paid_amount'), $payment->sum('due_amount'));
         $companies = Customer::get();
@@ -309,13 +308,22 @@ class CustomerController extends Controller
         foreach ($companies as $company) {
             $billDetails = AccountDetail::where('customer_id', $company->id)->orderBy('id')->get();
             $previousBalance = 0;
-                    
+
             foreach ($billDetails as $key => $item) {
                 $item->balance = $previousBalance + $item->total_amount - $item->paid_amount;
                 $item->update();
-                $previousBalance = $item->balance; 
+                $previousBalance = $item->balance;
             }
         }
-      dd('success');
+        dd('success');
+    }
+
+
+
+    public function CustomerPreviousDue($id) {
+
+        $accountDetail = AccountDetail::where('customer_id', $id)->latest()->first();
+
+        return response()->json($accountDetail);
     }
 }
