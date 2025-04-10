@@ -115,7 +115,7 @@ class InvoiceController extends Controller
                 ]);
 
                 // Check stock availability
-                $productStock = PurchaseStore::where('product_id', $product_id)->where('quantity', '>', 0)->get();
+                $productStock = PurchaseStore::where('product_id', $product_id)->where('quantity', '!=', 0)->get();
                 if ($productStock->sum('quantity') < $selling_qty) {
                     return redirect()->back()->with([
                         'message' => 'Sorry, Stock is not available',

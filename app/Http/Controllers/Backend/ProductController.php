@@ -4,18 +4,15 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\InvoiceDetail;
 use App\Models\Product;
 use App\Models\PurchaseStore;
 use App\Models\SubCategory;
 use App\Models\Supplier;
 use App\Models\Unit;
-use App\Models\PurchaseMeta;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
@@ -178,11 +175,26 @@ class ProductController extends Controller
 
     public function ProductStockAll()
     {
-        $products = Product::OrderBy('name', 'asc')->get();
+        $products = Product::orderBy('name', 'asc')->paginate(15);
         return view('admin.stock.stock_all', compact('products'));
-    }   
-    
-    
+
+        // $products = Product::orderBy('name', 'asc')->with('unit')->get();
+
+        // // Collect product IDs
+        // $productIds = $products->pluck('id');
+
+        // // Get total stock and value per product (fewer queries!)
+        // $stockData = PurchaseStore::whereIn('product_id', $productIds)
+        //     ->where('quantity', '!=', 0)
+        //     ->selectRaw('product_id, SUM(quantity) as total_quantity, SUM(quantity * unit_price) as total_value')
+        //     ->groupBy('product_id')
+        //     ->get()
+        //     ->keyBy('product_id'); // So we can access like $stockData[product_id]
+
+        // return view('admin.stock.stock_all', compact('products', 'stockData'));
+    }
+
+
     public function GetProduct($id)
     {
         $products = Product::where('category_id', $id)->get();
@@ -193,7 +205,7 @@ class ProductController extends Controller
     public function ProductSales()
     {
         $products = Product::OrderBy('name', 'asc')->get();
-        
+
         // $purchaseMeta = PurchaseMeta::get();
         // foreach ($purchaseMeta as $key => $purchase) {
         //     $purchaseStore = PurchaseStore::where('product_id', $purchase->product_id)->where('purchase_id',$purchase->purchase_id)->first();

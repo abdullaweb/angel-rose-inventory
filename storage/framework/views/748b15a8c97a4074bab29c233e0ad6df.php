@@ -1,5 +1,4 @@
-@extends('admin.admin_master')
-@section('admin')
+<?php $__env->startSection('admin'); ?>
     <div class="page-content">
         <!--end breadcrumb-->
         <div class="row">
@@ -14,7 +13,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <h4 class="text-muted mb-0 text-end">
-                                        <a href="{{URL::previous()}}" class="btn btn-sm btn-dark"> <i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
+                                        <a href="<?php echo e(URL::previous()); ?>" class="btn btn-sm btn-dark"> <i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
                                     </h4>
                                 </div>
                             </div>
@@ -31,25 +30,25 @@
                                             </tr>
                                         </thead>
                                         <tbody class="tbody">
-                                            @foreach ($adjustment->details as $key => $item)
+                                            <?php $__currentLoopData = $adjustment->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <tr class="tr">
                                                     <td class="text-center">
-                                                        <input class="form-control" type="text" value="{{ $item->product->category->name ?? ''}}"readonly>
+                                                        <input class="form-control" type="text" value="<?php echo e($item->product->category->name ?? ''); ?>"readonly>
                                                     </td>
                                                     <td class="text-center">
-                                                        <input class="form-control" type="text" value="{{$item->product->name ?? ''}}" readonly>
+                                                        <input class="form-control" type="text" value="<?php echo e($item->product->name ?? ''); ?>" readonly>
                                                     </td>
                                                     <td class="text-center">
-                                                        <input class="form-control" type="text" value="{{$item->quantity}}" readonly>
+                                                        <input class="form-control" type="text" value="<?php echo e($item->quantity); ?>" readonly>
                                                     </td>
                                                     <td class="text-center">
-                                                        <input class="form-control" type="text" value="{{$item->unit_price}}" readonly>
+                                                        <input class="form-control" type="text" value="<?php echo e($item->unit_price); ?>" readonly>
                                                     </td>
                                                     <td class="text-center">
-                                                        <input class="form-control" type="text" value="{{$item->quantity *$item->unit_price}}" readonly>
+                                                        <input class="form-control" type="text" value="<?php echo e($item->quantity *$item->unit_price); ?>" readonly>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -60,4 +59,6 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\laragon\www\angelrose-software\resources\views/admin/adjustment/adjustment_stock/view_adjustment_stock.blade.php ENDPATH**/ ?>

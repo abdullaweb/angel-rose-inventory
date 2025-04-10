@@ -15,7 +15,10 @@
                             <select id="customer" class="form-select select2">
                                 <option value="">-- Select Customer --</option>
                                 @foreach ($customers as $customer)
-                                    <option value="{{ $customer->id }}">{{ $customer->name }} - {{ $customer->phone}}</option>
+                                @php
+                                    $order = App\Models\AccountDetail::where('customer_id', $customer->id)->count();
+                                @endphp
+                                    <option value="{{ $customer->id }}">{{ $customer->name }} - {{ $customer->phone}} -{{ $order}}</option>
                                 @endforeach
                             </select>
                         </div>

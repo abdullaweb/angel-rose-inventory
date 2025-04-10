@@ -1,10 +1,9 @@
-@extends('admin.admin_master')
-@section('admin')
+<?php $__env->startSection('admin'); ?>
     <div class="page-content">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h5 class="m-0 font-weight-bold text-primary">Edit Adjustment Stock Update</h5>
             <h5 class="m-0 font-weight-bold text-primary">
-                <a href="{{ URL::previous() }}" class="btn btn-sm btn-info">
+                <a href="<?php echo e(URL::previous()); ?>" class="btn btn-sm btn-info">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                     Back</a>
             </h5>
@@ -13,10 +12,10 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('product.adjustment.update') }}" method="POST" class="custom-validation"
+                        <form action="<?php echo e(route('product.adjustment.update')); ?>" method="POST" class="custom-validation"
                             novalidate="" autocomplete="off">
-                            @csrf
-                            <input type="hidden" name="id" value="{{ $adjustment->id }}">
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" name="id" value="<?php echo e($adjustment->id); ?>">
                             <div class="row">
                                 <div class="col-md-12 mt-5 table-responsive">
                                     <table class="table border table-responsive table-striped">
@@ -35,32 +34,34 @@
                                             </tr>
                                         </thead>
                                         <tbody class="tbody">
-                                            @foreach ($adjustment->details as $key => $item)
+                                            <?php $__currentLoopData = $adjustment->details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <tr class="tr">
                                                     <td class="text-center">
-                                                        <select name="category_id[]" id="category_{{ $key + 1 }}"
+                                                        <select name="category_id[]" id="category_<?php echo e($key + 1); ?>"
                                                             class="form-control form-select category" required=""
                                                             data-parsley-required-message="Category Id is required">
                                                             <option selected value="">Select Category</option>
-                                                            @foreach ($categories as $category)
-                                                                <option value="{{ $category->id }}"
-                                                                    {{ $item->product->category_id == $category->id ? 'selected' : '' }}>
-                                                                    {{ $category->name }}
+                                                            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                <option value="<?php echo e($category->id); ?>"
+                                                                    <?php echo e($item->product->category_id == $category->id ? 'selected' : ''); ?>>
+                                                                    <?php echo e($category->name); ?>
+
                                                                 </option>
-                                                            @endforeach
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                     </td>
                                                     <td class="text-center">
-                                                        <select name="product_id[]" id="product_{{ $key + 1 }}"
+                                                        <select name="product_id[]" id="product_<?php echo e($key + 1); ?>"
                                                             class="form-control product form-select select2" required=""
                                                             data-parsley-required-message="Product Id is required">
                                                             <option selected value="">Select Product</option>
-                                                            @foreach ($products as $product)
-                                                                <option value="{{ $product->id }}"
-                                                                    {{ $item->product_id == $product->id ? 'selected' : '' }}>
-                                                                    {{ $product->name }}
+                                                            <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                <option value="<?php echo e($product->id); ?>"
+                                                                    <?php echo e($item->product_id == $product->id ? 'selected' : ''); ?>>
+                                                                    <?php echo e($product->name); ?>
+
                                                                 </option>
-                                                            @endforeach
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                     </td>
                                                     <td width="10%" class="text-center">
@@ -68,19 +69,19 @@
                                                             placeholder="Quantity" name="quantity[]" id="quantity"
                                                             required=""
                                                             data-parsley-required-message="Quantity Id is required"
-                                                            value="{{ $item->quantity }}">
+                                                            value="<?php echo e($item->quantity); ?>">
                                                     </td>
                                                     <td width="10%" class="text-center">
                                                         <input type="text" class="form-control unit_price"
                                                             placeholder="Unit Price" name="unit_price[]"
-                                                            id="unit_price_{{ $key + 1 }}" required=""
+                                                            id="unit_price_<?php echo e($key + 1); ?>" required=""
                                                             data-parsley-required-message="Unit Price is required"
-                                                            value="{{ $item->unit_price }}">
+                                                            value="<?php echo e($item->unit_price); ?>">
                                                     </td>
                                                     <td width="10%" class="text-center">
                                                         <input type="text" class="form-control total_amount"
                                                             placeholder="Total" name="total_amount[]"
-                                                            value="{{ $item->quantity * $item->unit_price }}" readonly>
+                                                            value="<?php echo e($item->quantity * $item->unit_price); ?>" readonly>
                                                     </td>
                                                     <td class="text-center">
                                                         <button type="button" onclick="removeRow(event)"
@@ -89,7 +90,7 @@
                                                         </button>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
                                         <tfoot>
                                             <tr>
@@ -98,15 +99,15 @@
                                                 <th>
                                                     <input type="text" readonly class="form-control"
                                                         name="estimated_total" id="estimated_total"
-                                                        placeholder="Grand Total" value="{{ $adjustment->total_amount }}">
+                                                        placeholder="Grand Total" value="<?php echo e($adjustment->total_amount); ?>">
 
                                                     <input type="hidden" class="form-control" placeholder="Total"
                                                         name="total_quantity" id="total_quantity"
-                                                        value="{{ $adjustment->total_qty }}" readonly>
+                                                        value="<?php echo e($adjustment->total_qty); ?>" readonly>
 
                                                     <input type="hidden" class="form-control" placeholder="Total"
                                                         name="total_stock" id="total_stock"
-                                                        value="{{ count($adjustment->details) }}" readonly>
+                                                        value="<?php echo e(count($adjustment->details)); ?>" readonly>
                                                 </th>
                                             </tr>
                                         </tfoot>
@@ -159,11 +160,12 @@
                         class="form-control form-select category" required=""
                         data-parsley-required-message="Category Id is required">
                         <option selected value="">Select Category</option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}">
-                                {{ $category->name }}
+                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($category->id); ?>">
+                                <?php echo e($category->name); ?>
+
                             </option>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                 </td>
                 <td class="text-center">
@@ -224,7 +226,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: "{{ route('get.products', '') }}" + "/" + id,
+                url: "<?php echo e(route('get.products', '')); ?>" + "/" + id,
                 success: function(data) {
 
                     let html = '<option value="">Select Product </option>';
@@ -298,4 +300,6 @@
             });
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\laragon\www\angelrose-software\resources\views/admin/adjustment/adjustment_stock/edit_adjustment_stock.blade.php ENDPATH**/ ?>

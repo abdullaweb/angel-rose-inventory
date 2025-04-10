@@ -93,7 +93,7 @@ class AppServiceProvider extends ServiceProvider
 
             return $words;
         });
-        
+
         date_default_timezone_set('Asia/Dhaka');
     }
 }

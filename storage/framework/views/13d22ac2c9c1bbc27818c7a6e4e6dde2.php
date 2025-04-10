@@ -1,11 +1,10 @@
-@extends('admin.admin_master')
-@section('admin')
+<?php $__env->startSection('admin'); ?>
     <div class="page-content">
         <!--breadcrumb-->
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h5 class="m-0 font-weight-bold text-primary">Adjustment Product Stock list</h5>
             <h5 class="m-0 font-weight-bold text-primary">
-                <a href="{{route('product.adjustment.add')}}" class="btn btn-info"> <i class="fa fa-plus-circle" aria-hidden="true"></i>  Add Stock</a>
+                <a href="<?php echo e(route('product.adjustment.add')); ?>" class="btn btn-info"> <i class="fa fa-plus-circle" aria-hidden="true"></i>  Add Stock</a>
             </h5>
         </div>
         <!--end breadcrumb-->
@@ -29,36 +28,37 @@
                                     <tr>
                                         <th>Sl</th>
                                         <th>Stock Number</th>
-                                        <th>{{ number_format($adjustment->sum('total_qty')) }} PCS</th>
-                                        <th> {{ number_format($adjustment->sum('total_amount'),2)  }}</th>
+                                        <th><?php echo e(number_format($adjustment->sum('total_qty'))); ?> PCS</th>
+                                        <th> <?php echo e(number_format($adjustment->sum('total_amount'),2)); ?></th>
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
-                                    @foreach ($adjustment as $key => $item)
+                                    <?php $__currentLoopData = $adjustment; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
-                                            <td>{{ $key + 1 }}</td>
-                                            <td>{{$item->adjustment_no}}</td>
+                                            <td><?php echo e($key + 1); ?></td>
+                                            <td><?php echo e($item->adjustment_no); ?></td>
                                             <td>
-                                                {{ $item->total_qty }} PCS
+                                                <?php echo e($item->total_qty); ?> PCS
                                             </td>
                                             <td>
-                                                {{ number_format($item->total_amount,2) }}
+                                                <?php echo e(number_format($item->total_amount,2)); ?>
+
                                             </td>
 
                                             <td>
-                                                <a  href="{{ route('product.adjustment.edit', $item->id) }}" class="btn btn-sm btn-info">
+                                                <a  href="<?php echo e(route('product.adjustment.edit', $item->id)); ?>" class="btn btn-sm btn-info">
                                                     <i class="fas fa-edit "></i>
                                                 </a>
-                                                <a  href="{{ route('product.adjustment.view', $item->id) }}" class="btn btn-sm btn-info">
+                                                <a  href="<?php echo e(route('product.adjustment.view', $item->id)); ?>" class="btn btn-sm btn-info">
                                                     <i class="fa fa-eye" aria-hidden="true"></i>
                                                 </a>
-                                                <a  href="{{ route('product.adjustment.delete', $item->id) }}" id="delete" class="btn btn-sm btn-danger">
+                                                <a  href="<?php echo e(route('product.adjustment.delete', $item->id)); ?>" id="delete" class="btn btn-sm btn-danger">
                                                     <i class="fa fa-trash-alt" aria-hidden="true"></i>
                                                 </a>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
                             </table>
                         </div>
@@ -67,4 +67,6 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\laragon\www\angelrose-software\resources\views/admin/adjustment/adjustment_stock/adjustment_stock_list.blade.php ENDPATH**/ ?>

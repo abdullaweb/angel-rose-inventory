@@ -35,7 +35,7 @@ class AdminController extends Controller
         $runningMonthExpense = Expense::whereMonth('date', date('m'))->whereYear('date', date('Y'))->sum('amount');
         $runningMonthSale = InvoiceDetail::whereMonth('date', date('m'))->whereYear('date', date('Y'))->sum('selling_price');
         $runningMonthPurchase = Purchase::whereMonth('date', date('m')) ->whereYear('date', date('Y'))->sum('total_amount');
-        
+
         $runningMonthWholeSale = SalesProfit::with('invoice')->whereMonth('date', date('m'))->whereYear('date', date('Y'))->whereHas('invoice', function ($query) {
             $query->whereHas('customer', function ($query) {
                 $query->where('status', '1')->where('return_status', '0');
@@ -47,7 +47,7 @@ class AdminController extends Controller
                 $query->where('status', '0')->where('return_status', '0');
             });
         })->sum('profit');
-        
+
         $customers = Customer::get();
         $retailCustomerAmount = 0;
         $wholeSaleCustomerAmount = 0;
