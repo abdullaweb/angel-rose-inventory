@@ -1,5 +1,4 @@
-@extends('admin.admin_master')
-@section('admin')
+<?php $__env->startSection('admin'); ?>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
     <div class="page-content">
@@ -13,16 +12,12 @@
                             <h4 class="card-title">Add Product </h4><br><br>
 
 
-                            {{-- @if (count($errors))
-                                @foreach ($errors->all() as $error)
-                                    <p class="alert alert-danger alert-dismissible fade show"> {{ $error }} </p>
-                                @endforeach
-                            @endif --}}
+                            
 
 
-                            <form method="post" action="{{ route('product.store') }}" id="myForm"
+                            <form method="post" action="<?php echo e(route('product.store')); ?>" id="myForm"
                                 enctype="multipart/form-data">
-                                @csrf
+                                <?php echo csrf_field(); ?>
 
                                 <div class="row mb-3">
                                     <label for="example-text-input" class="col-sm-2 col-form-label">Product
@@ -30,9 +25,16 @@
                                     <div class="col-sm-10 form-group">
                                         <input name="name" placeholder="Product Name" class="form-control" type="text"
                                             id="name">
-                                        @error('name')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                        <?php $__errorArgs = ['name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="text-danger"><?php echo e($message); ?></div>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                     </div>
                                 </div>
                                 <!-- end row -->
@@ -44,9 +46,9 @@
                                     <div class="col-sm-10 form-group">
                                         <select name="category_id" id="category_id" class="form-control">
                                             <option value="">Select Category</option>
-                                            @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endforeach
+                                            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($category->id); ?>"><?php echo e($category->name); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
                                 </div>
@@ -57,9 +59,9 @@
                                     <div class="col-sm-10 form-group">
                                         <select name="supplier_id" id="supplier_id" class="form-control">
                                             <option value="">Select Supplier</option>
-                                            @foreach ($suppliers as $supplier)
-                                                <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                                            @endforeach
+                                            <?php $__currentLoopData = $suppliers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $supplier): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($supplier->id); ?>"><?php echo e($supplier->name); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
                                 </div>
@@ -70,9 +72,9 @@
                                     <div class="col-sm-10 form-group">
                                         <select name="unit_id" id="unit_id" class="form-control">
                                             <option value="">Select Unit</option>
-                                            @foreach ($units as $unit)
-                                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
-                                            @endforeach
+                                            <?php $__currentLoopData = $units; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $unit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($unit->id); ?>"><?php echo e($unit->name); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
                                 </div>
@@ -90,7 +92,7 @@
                                     <div class="col-10 mt-3 text-secondary">
                                         <img id="showImage" alt="Product Image"
                                             width="200px" height="200px"
-                                            src="{{ url('upload/no_image.jpg') }}">
+                                            src="<?php echo e(url('upload/no_image.jpg')); ?>">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -172,4 +174,6 @@
             });
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\laragon\www\angelrose-software\resources\views/admin/product/product_add.blade.php ENDPATH**/ ?>

@@ -67,19 +67,19 @@ class ProductController extends Controller
                 $product->created_at = Carbon::now();
                 $product->save();
             }
-            $notification = array([
+            $notification = [
                 'message' => 'Product Inserted Successfully',
                 'alert_type' => 'success',
-            ]);
+            ];
             DB::commit();
             return redirect()->route('product.all')->with($notification);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error: adding product ' . $e->getMessage() . ' Line: ' . $e->getLine());
-            $notification = array([
+            $notification = [
                 'message' => 'Something went wrong',
                 'alert-type' => 'error'
-            ]);
+            ];
             return redirect()->back()->with($notification);
         }
     }
@@ -95,72 +95,93 @@ class ProductController extends Controller
 
     public function ProductUpdate(Request $request)
     {
-        $product_id = $request->id;
-        $user_id = Auth::user()->id;
+        DB::beginTransaction();
+        try {
+            $product_id = $request->id;
+            $user_id = Auth::user()->id;
 
-        $request->validate(
-            [
+            $request->validate([
                 'name' => Rule::unique('products')->ignore($user_id),
-            ],
-        );
-
-
-        if ($request->file('image')) {
-            $image = $request->file('image');
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-
-
-            $existing_image = Product::findOrFail($product_id);
-            @unlink('upload/product_images/' . $existing_image->image);
-
-            Image::make($image)->resize(200, 200)->save('upload/product_images/' . $name_gen);
-            $save_url = $name_gen;
-
-            Product::findOrFail($product_id)->update([
-                'name' => $request->name,
-                'unit_id' => $request->unit_id,
-                'image' => $save_url,
-                'category_id' => $request->category_id,
-                'updated_by' => Auth::user()->id,
-                'updated_at' => Carbon::now(),
             ]);
 
-            $notification = array([
-                'message' => 'Product Updated Successfully',
-                'alert_type' => 'success',
-            ]);
-        } else {
-            Product::findOrFail($product_id)->update([
-                'name' => $request->name,
-                'unit_id' => $request->unit_id,
-                'category_id' => $request->category_id,
-                'updated_by' => Auth::user()->id,
-                'updated_at' => Carbon::now(),
-            ]);
 
-            $notification = array([
-                'message' => 'Product Updated Successfully Without Image',
-                'alert_type' => 'success',
-            ]);
+            if ($request->file('image')) {
+                $image = $request->file('image');
+                $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+
+
+                $existing_image = Product::findOrFail($product_id);
+                @unlink('upload/product_images/' . $existing_image->image);
+
+                Image::make($image)->resize(200, 200)->save(public_path('upload/product_images/' . $name_gen));
+                $save_url = $name_gen;
+
+                Product::findOrFail($product_id)->update([
+                    'name' => $request->name,
+                    'unit_id' => $request->unit_id,
+                    'image' => $save_url,
+                    'category_id' => $request->category_id,
+                    'updated_by' => Auth::user()->id,
+                    'updated_at' => Carbon::now(),
+                ]);
+
+                $notification = [
+                    'message' => 'Product Updated Successfully',
+                    'alert_type' => 'success',
+                ];
+            } else {
+                Product::findOrFail($product_id)->update([
+                    'name' => $request->name,
+                    'unit_id' => $request->unit_id,
+                    'category_id' => $request->category_id,
+                    'updated_by' => Auth::user()->id,
+                    'updated_at' => Carbon::now(),
+                ]);
+
+                $notification = [
+                    'message' => 'Product Updated Successfully Without Image',
+                    'alert_type' => 'success',
+                ];
+            }
+
+            DB::commit();
+            return redirect()->route('product.all')->with($notification);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error: updating product ' . $e->getMessage() . ' Line: ' . $e->getLine());
+            $notification = [
+                'message' => 'Something went wrong',
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
         }
-
-
-        return redirect()->route('product.all')->with($notification);
     }
 
     public function ProductDelete($id)
     {
-        $product = Product::findOrFail($id);
-        if ($product->image != NULL) {
-            @unlink(public_path('upload/product_images/' . $product->image));
-        }
-        $product->delete();
+        DB::beginTransaction();
+        try {
+            $product = Product::findOrFail($id);
+            if ($product->image != NULL) {
+                @unlink(public_path('upload/product_images/' . $product->image));
+            }
+            $product->delete();
 
-        $notification = array([
-            'message' => 'Product Deleted Successfully',
-            'alert_type' => 'success',
-        ]);
-        return redirect()->back()->with($notification);
+            $notification = [
+                'message' => 'Product Deleted Successfully',
+                'alert_type' => 'success',
+            ];
+            DB::commit();
+            return redirect()->back()->with($notification);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error: deleting product ' . $e->getMessage() . ' Line: ' . $e->getLine());
+            $notification = [
+                'message' => 'Something went wrong',
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
+        }
     }
 
     public function GetSubCategory(Request $request)
