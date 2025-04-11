@@ -100,9 +100,9 @@ class ProductController extends Controller
             $product_id = $request->id;
             $user_id = Auth::user()->id;
 
-            $request->validate([
-                'name' => Rule::unique('products')->ignore($user_id),
-            ]);
+            // $request->validate([
+            //     'name' => Rule::unique('products')->ignore($user_id),
+            // ]);
 
 
             if ($request->file('image')) {
