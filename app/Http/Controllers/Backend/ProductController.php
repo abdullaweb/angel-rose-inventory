@@ -12,6 +12,8 @@ use App\Models\Unit;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
 use Illuminate\Validation\Rule;
 
@@ -34,49 +36,52 @@ class ProductController extends Controller
 
     public function ProductStore(Request $request)
     {
-        // $request->validate(
-        //     [
-        //         'name' => 'unique:products,name'
-        //     ],
-        //     [
-        //         'name.required' => 'Product name has already been taken.',
-        //     ],
-        // );
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'name' => 'unique:products,name'
+                ],
+                [
+                    'name' => 'Product name has already been taken.',
+                    'name.required' => 'Product name is required.',
+                ]
+            );
 
-        $request->validate(
-            [
-                'name' => 'unique:products,name'
-            ],
-            [
-                'name' => 'Product name has already been taken.',
-                'name.required' => 'Product name is required.',
-            ]
-        );
+            if ($request->file('image')) {
+                $image = $request->file('image');
+                $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
 
-        if ($request->file('image')) {
-            $image = $request->file('image');
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+                Image::make($image)->resize(200, 200)->save(public_path('upload/product_images/' . $name_gen));
+                $save_url = $name_gen;
+                // $save_url = 'upload/product_images/' . $name_gen;
 
-            Image::make($image)->resize(200, 200)->save('upload/product_images/' . $name_gen);
-            $save_url = $name_gen;
-            // $save_url = 'upload/product_images/' . $name_gen;
-
-            $product = new Product;
-            $product->name = $request->name;
-            $product->image = $save_url;
-            $product->category_id = $request->category_id;
-            $product->supplier_id = $request->supplier_id;
-            $product->unit_id = $request->unit_id;
-            $product->quantity = '0';
-            $product->created_by = Auth::user()->id;
-            $product->created_at = Carbon::now();
-            $product->save();
+                $product = new Product;
+                $product->name = $request->name;
+                $product->image = $save_url;
+                $product->category_id = $request->category_id;
+                $product->supplier_id = $request->supplier_id;
+                $product->unit_id = $request->unit_id;
+                $product->quantity = '0';
+                $product->created_by = Auth::user()->id;
+                $product->created_at = Carbon::now();
+                $product->save();
+            }
+            $notification = array([
+                'message' => 'Product Inserted Successfully',
+                'alert_type' => 'success',
+            ]);
+            DB::commit();
+            return redirect()->route('product.all')->with($notification);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error: adding product ' . $e->getMessage() . ' Line: ' . $e->getLine());
+            $notification = array([
+                'message' => 'Something went wrong',
+                'alert-type' => 'error'
+            ]);
+            return redirect()->back()->with($notification);
         }
-        $notification = array([
-            'message' => 'Product Inserted Successfully',
-            'alert_type' => 'success',
-        ]);
-        return redirect()->route('product.all')->with($notification);
     }
 
     public function ProductEdit($id)
@@ -147,9 +152,10 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         if ($product->image != NULL) {
-            @unlink('upload/product_images/' . $product->image);
+            @unlink(public_path('upload/product_images/' . $product->image));
         }
         $product->delete();
+
         $notification = array([
             'message' => 'Product Deleted Successfully',
             'alert_type' => 'success',
