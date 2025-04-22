@@ -202,7 +202,7 @@ class ProductController extends Controller
 
     public function ProductStockAll()
     {
-        $products = Product::orderBy('name', 'asc')->paginate(15);
+        $products = Product::orderBy('name', 'asc')->get();
         return view('admin.stock.stock_all', compact('products'));
 
         // $products = Product::orderBy('name', 'asc')->with('unit')->get();

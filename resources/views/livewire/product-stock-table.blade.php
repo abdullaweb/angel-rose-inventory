@@ -54,11 +54,15 @@
                             </div>
                         </td>
                         @php
+                            $quantity = 0;
+                            $value = 0;
                             $purchaseStore = App\Models\PurchaseStore::where('product_id', $item->id)
                                 ->where('quantity', '>', 0)
                                 ->get();
-                            $quantity = $purchaseStore->sum('quantity');
-                            $value = $purchaseStore->sum('unit_price') * $quantity;
+                            foreach ($purchaseStore as $purchase) {
+                                $quantity += $purchase->quantity;
+                                $value += $purchase->unit_price * $purchase->quantity;
+                            }
                         @endphp
                         <td><strong>{{ $quantity }} {{ $item['unit']['short_form'] }}</strong></td>
                         <td>৳{{ number_format($value, 2) }}</td>

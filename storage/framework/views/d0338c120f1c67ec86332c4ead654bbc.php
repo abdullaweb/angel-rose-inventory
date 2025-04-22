@@ -1,5 +1,4 @@
-@extends('admin.admin_master')
-@section('admin')
+<?php $__env->startSection('admin'); ?>
     <div class="page-content">
         <div class="container-fluid">
             <div class="row">
@@ -7,9 +6,9 @@
                     <div class="card">
                         <div class="card-body">
                             <h2 class="text-muted mb-3">Add Employee</h2>
-                            <form class="custom-validation" action="{{ route('store.employee') }}" method="POST"
+                            <form class="custom-validation" action="<?php echo e(route('store.employee')); ?>" method="POST"
                                 novalidate="" enctype="multipart/form-data">
-                                @csrf
+                                <?php echo csrf_field(); ?>
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="mb-3">
@@ -59,7 +58,7 @@
                                     <div class="col-6">
                                         <div class="mb-3">
                                             <div>
-                                                {{-- <label for="" class="mb-2 mt-2"><b>Joining Date</b></label> --}}
+                                                
                                                 <input type="date" id="joining_date" name="joining_date"
                                                     class="form-control date_picker" placeholder="Joining Date">
                                             </div>
@@ -88,7 +87,7 @@
                                         <input type="file" name="image" id="image" class="form-control">
                                     </div>
                                     <div class="col-12 mt-3 text-secondary">
-                                        <img id="showImage" src="{{ url('upload/no_image.jpg') }}" alt="Employee Image"
+                                        <img id="showImage" src="<?php echo e(url('upload/no_image.jpg')); ?>" alt="Employee Image"
                                             width="200px" height="200px">
                                     </div>
                                 </div>
@@ -126,4 +125,6 @@
             });
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.admin_master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\laragon\www\angelrose-software\resources\views/admin/employee_page/add_employee.blade.php ENDPATH**/ ?>

@@ -54,7 +54,14 @@
                                         </a>
                                     </td>
                                     <td>
-                                        {{ $item->quantity }} {{ $item->product->unit->short_form }}
+                                        @php
+                                            $purchaseStore = App\Models\PurchaseStore::where('purchase_id', $item->purchase_id)
+                                                ->where('product_id', $item->product_id)
+                                                ->where('quantity', '>', 0)
+                                                ->get();
+                                            $quantity = $purchaseStore->sum('quantity');
+                                        @endphp
+                                        {{ $item->quantity }} {{$quantity}} {{ $item->product->unit->short_form }}
                                     </td>
                                     <td>
                                         {{ number_format($item->unit_price) }}

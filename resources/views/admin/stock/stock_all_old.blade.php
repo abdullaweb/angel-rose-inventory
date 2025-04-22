@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                     <div class="card-body">
+                    <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered" id="datatable" width="100%" cellspacing="0">
                                 <thead>
@@ -33,8 +33,8 @@
                                 </tfoot>
                                 <tbody>
                                     @php
-                                        $grandTotal = 0;
                                         $grandQuantity = 0;
+                                        $grandTotal = 0;
 
                                     @endphp
                                     @foreach ($products as $key => $item)
@@ -49,19 +49,26 @@
                                                 </div>
                                             </td>
                                             @php
-                                                $stock = $stockData[$item->id] ?? null;
-                                                $quantity = $stock->total_quantity ?? 0;
-                                                $value = $stock->total_value ?? 0;
-                                            @endphp
-                                            <td><strong>{{ $quantity }} {{ $item['unit']['short_form'] }}</strong></td>
-                                            <td>৳{{ number_format($value, 2) }}</td>
-                                            @php
+                                                $total = 0;
+                                                $quantity = 0;
+                                                $purchaseStore = App\Models\PurchaseStore::where(
+                                                    'product_id',
+                                                    $item->id,
+                                                )
+                                                    ->where('quantity', '>', 0)
+                                                    ->get();
+                                                foreach ($purchaseStore as $purchase) {
+                                                    $quantity += $purchase->quantity;
+                                                    $total += $purchase->unit_price * $purchase->quantity;
+                                                }
+
                                                 $grandQuantity += $quantity;
-                                                $grandTotal += $value;
+                                                $grandTotal += $total;
                                             @endphp
+                                            <td>{{ $quantity }}</td>
+                                            <td>{{ $total }}</td>
                                             <td>
-                                                <a href="{{ route('purchase.history', $item->id) }}"
-                                                    class="btn btn-info btn-sm">
+                                                <a href="{{ route('purchase.history', $item->id) }}" class="btn btn-info btn-sm">
                                                     <i class="fa fa-eye"></i> Purchase History
                                                 </a>
                                             </td>

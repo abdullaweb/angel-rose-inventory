@@ -54,7 +54,14 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <?php echo e($item->quantity); ?> <?php echo e($item->product->unit->short_form); ?>
+                                        <?php
+                                            $purchaseStore = App\Models\PurchaseStore::where('purchase_id', $item->purchase_id)
+                                                ->where('product_id', $item->product_id)
+                                                ->where('quantity', '>', 0)
+                                                ->get();
+                                            $quantity = $purchaseStore->sum('quantity');
+                                        ?>
+                                        <?php echo e($item->quantity); ?> <?php echo e($quantity); ?> <?php echo e($item->product->unit->short_form); ?>
 
                                     </td>
                                     <td>

@@ -31,8 +31,10 @@ class ProductStockTable extends Component
                 ->where('quantity', '>', 0)
                 ->get();
 
-            $grandQuantity += $purchaseItems->sum('quantity');
-            $grandTotal += $purchaseItems->sum('unit_price') * $purchaseItems->sum('quantity') ?? 0;
+                foreach ($purchaseItems as $key => $value) {
+                    $grandQuantity += $value->quantity;
+                    $grandTotal += $value->unit_price * $value->quantity;
+                }
         }
 
         return view(
